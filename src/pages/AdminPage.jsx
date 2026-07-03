@@ -2,6 +2,7 @@ import { ArrowRight, Flag, ShieldCheck, UploadCloud, Users } from 'lucide-react'
 import { Link } from 'react-router-dom';
 import ItemCard from '../components/ItemCard';
 import StatusPill from '../components/StatusPill';
+import { StatCardSkeleton } from '../components/Skeleton';
 import { fallbackItems } from '../data/mockData';
 import { useEffect, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
@@ -101,13 +102,17 @@ export default function AdminPage() {
           <div><span className="eyebrow">Insight</span><h2>Kategori teratas (30 hari)</h2></div>
         </div>
         <div className="card-grid">
-          {stats.loading ? <p>Memuat metrik…</p> : (
-            stats.topCategories.length ? stats.topCategories.map((c) => (
-              <div className="stat-card" key={c.name}>
+          {stats.loading ? (
+            Array.from({ length: 3 }, (_, index) => <StatCardSkeleton key={index} index={index} />)
+          ) : stats.topCategories.length ? (
+            stats.topCategories.map((c) => (
+              <div className="stat-card content-reveal" key={c.name}>
                 <strong>{c.count}</strong>
                 <span>{c.name}</span>
               </div>
-            )) : <p>Tidak ada data kategori.</p>
+            ))
+          ) : (
+            <p style={{ gridColumn: '1 / -1' }}>Tidak ada data kategori.</p>
           )}
         </div>
       </section>

@@ -5,6 +5,7 @@ import AccountNav from '../components/AccountNav';
 import EmptyState from '../components/EmptyState';
 import ItemCard from '../components/ItemCard';
 import StatusPill from '../components/StatusPill';
+import { DashboardSkeleton } from '../components/Skeleton';
 import { useAuth } from '../contexts/AuthContext';
 import { fallbackItems, fallbackNeeds, fallbackRequests } from '../data/mockData';
 import { badgeLabels } from '../lib/constants';
@@ -15,11 +16,11 @@ export default function DashboardPage() {
   const { profile, user } = useAuth();
   const [activeTab, setActiveTab] = useState('ringkasan');
   const [dashboardData, setDashboardData] = useState({
-    items: fallbackItems.slice(0, 3),
-    requests: fallbackRequests.slice(0, 3),
-    favorites: fallbackItems.slice(0, 2),
-    needs: fallbackNeeds.slice(0, 2),
-    loading: false,
+    items: isSupabaseConfigured ? [] : fallbackItems.slice(0, 3),
+    requests: isSupabaseConfigured ? [] : fallbackRequests.slice(0, 3),
+    favorites: isSupabaseConfigured ? [] : fallbackItems.slice(0, 2),
+    needs: isSupabaseConfigured ? [] : fallbackNeeds.slice(0, 2),
+    loading: isSupabaseConfigured,
   });
 
   useEffect(() => {
@@ -254,7 +255,13 @@ export default function DashboardPage() {
           <Link className="text-link" to="/profil">Lihat profil kontribusi <ArrowRight size={15} /></Link>
         </aside>
 
-        <div className="dashboard-main">{renderTabContent()}</div>
+        <div className="dashboard-main">
+          {dashboardData.loading && isSupabaseConfigured ? (
+            <DashboardSkeleton />
+          ) : (
+            <div className="content-reveal">{renderTabContent()}</div>
+          )}
+        </div>
       </section>
     </main>
   );

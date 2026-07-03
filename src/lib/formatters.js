@@ -34,3 +34,17 @@ export function summarizeText(text, maxLength = 120) {
   if (text.length <= maxLength) return text;
   return `${text.slice(0, maxLength).trim()}...`;
 }
+
+export function formatCurrency(amount) {
+  if (amount == null) return 'Rp 0';
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+export function getCampaignProgress(collected, target) {
+  if (!target) return 0;
+  return Math.min(100, Math.round((collected / target) * 100));
+}

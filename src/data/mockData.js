@@ -171,3 +171,50 @@ export const fallbackRequests = [
     planned_pickup_at: new Date().toISOString(),
   },
 ];
+
+export const fallbackCampaigns = [
+  {
+    id: 'demo-campaign-1',
+    title: 'Bantuan Pendidikan Anak Yatim',
+    slug: 'bantuan-pendidikan-anak-yatim',
+    description: 'Mengumpulkan dana untuk biaya sekolah, buku, dan seragam 50 anak yatim di Bandung.',
+    target_amount: 50000000,
+    collected_amount: 12500000,
+    status: 'active',
+    category: 'Pendidikan',
+    image_url: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=900&q=80',
+    start_date: new Date().toISOString(),
+    end_date: null,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'demo-campaign-2',
+    title: 'Bantuan Korban Bencana',
+    slug: 'bantuan-korban-bencana',
+    description: 'Donasi untuk kebutuhan dasar: makanan, pakaian, dan perlengkapan darurat bagi korban bencana alam.',
+    target_amount: 100000000,
+    collected_amount: 43200000,
+    status: 'active',
+    category: 'Kemanusiaan',
+    image_url: 'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=900&q=80',
+    start_date: new Date().toISOString(),
+    end_date: null,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'demo-campaign-3',
+    title: 'Operasi Jantung Anak',
+    slug: 'operasi-jantung-anak',
+    description: 'Membantu biaya operasi jantung untuk 3 anak dari keluarga tidak mampu.',
+    target_amount: 75000000,
+    collected_amount: 75000000,
+    status: 'completed',
+    category: 'Kesehatan',
+    image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=900&q=80',
+    start_date: new Date().toISOString(),
+    end_date: null,
+    created_at: new Date().toISOString(),
+  },
+];
+
+export const fallbackDonations = [];

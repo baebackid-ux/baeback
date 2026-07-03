@@ -7,6 +7,7 @@ import { useLenis } from '../contexts/LenisContext';
 const navItems = [
   { to: '/', label: 'Beranda' },
   { to: '/barang', label: 'Jelajahi Barang' },
+  { to: '/campaign', label: 'Campaign' },
   { to: '/need-board', label: 'Need Board' },
 ];
 
@@ -76,6 +77,7 @@ export default function Navbar() {
               </Link>
               <div className="account-popover">
                 <Link to="/dashboard" onClick={() => setOpen(false)}><UserRound size={16} /> Dashboard</Link>
+                <Link to="/donasi-saya" onClick={() => setOpen(false)}>Donasi saya</Link>
                 <Link to="/profil" onClick={() => setOpen(false)}>Profil kontribusi</Link>
                 <Link to="/daftar-minat" onClick={() => setOpen(false)}>Daftar minat</Link>
                 <button onClick={signOut}><LogOut size={16} /> Keluar</button>

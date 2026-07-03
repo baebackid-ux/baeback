@@ -4,12 +4,13 @@ import { Link, useSearchParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import ItemCard from '../components/ItemCard';
 import SearchFilters from '../components/SearchFilters';
+import { CardGridSkeleton, ItemCardSkeleton } from '../components/Skeleton';
 import { fallbackItems } from '../data/mockData';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export default function ItemsPage() {
   const [searchParams] = useSearchParams();
-  const [items, setItems] = useState(fallbackItems);
+  const [items, setItems] = useState(isSupabaseConfigured ? [] : fallbackItems);
   const [filters, setFilters] = useState({
     query: searchParams.get('q') || '',
     category: searchParams.get('category') || '',
@@ -20,6 +21,7 @@ export default function ItemsPage() {
   const [page, setPage] = useState(0);
   const itemsPerPage = 12;
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(isSupabaseConfigured);
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef(null);
 
@@ -47,8 +49,10 @@ export default function ItemsPage() {
 
     const { data, error } = await queryBuilder;
     setLoading(false);
+    if (p === 0) setInitialLoading(false);
     if (error) {
       console.error('Failed to load items', error.message || error);
+      if (p === 0) setInitialLoading(false);
       return;
     }
 
@@ -67,6 +71,7 @@ export default function ItemsPage() {
     setPage(0);
     setHasMore(true);
     if (!isSupabaseConfigured) {
+      setInitialLoading(false);
       // demo mode: client-side pagination of fallbackItems
       const start = 0;
       const end = itemsPerPage;
@@ -75,6 +80,8 @@ export default function ItemsPage() {
       if (fallbackItems.length <= itemsPerPage) setHasMore(false);
       return;
     }
+    setInitialLoading(true);
+    setItems([]);
     fetchPage(0);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.query, filters.category, filters.condition, filters.pickup]);
@@ -121,17 +128,25 @@ export default function ItemsPage() {
       </header>
       <div className="container">
       <SearchFilters filters={filters} onChange={setFilters} />
-      <div className="catalog-toolbar"><p><strong>{filteredItems.length}</strong> barang ditemukan</p><span><SlidersHorizontal size={15} /> Terbaru lebih dulu</span></div>
-      {filteredItems.length ? (
+      <div className="catalog-toolbar"><p><strong>{initialLoading ? '—' : filteredItems.length}</strong> barang ditemukan</p><span><SlidersHorizontal size={15} /> Terbaru lebih dulu</span></div>
+      {initialLoading ? (
+        <CardGridSkeleton count={8} />
+      ) : filteredItems.length ? (
         <>
-        <div className="card-grid">
+        <div className="card-grid content-reveal">
           {filteredItems.map((item) => (
             <ItemCard key={item.id} item={item} />
           ))}
+          {loading && page > 0 && (
+            <>
+              <ItemCardSkeleton index={0} />
+              <ItemCardSkeleton index={1} />
+            </>
+          )}
         </div>
         <div ref={loaderRef} style={{ height: 1 }} />
         <div className="catalog-footer">
-          {loading && <p>Memuat lebih banyak barang…</p>}
+          {loading && page > 0 && <p className="loading-note">Memuat lebih banyak barang…</p>}
           {!hasMore && !loading && <p>Tidak ada barang lebih banyak.</p>}
           {!isSupabaseConfigured && hasMore && (
             <button

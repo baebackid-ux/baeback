@@ -6,12 +6,15 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { LenisProvider } from './contexts/LenisContext';
 import AdminPage from './pages/AdminPage';
 import AuthPage from './pages/AuthPage';
+import CampaignDetailPage from './pages/CampaignDetailPage';
+import CampaignsPage from './pages/CampaignsPage';
 import DashboardPage from './pages/DashboardPage';
 import DonateItemPage from './pages/DonateItemPage';
 import FavoritesPage from './pages/FavoritesPage';
 import HomePage from './pages/HomePage';
 import ItemDetailPage from './pages/ItemDetailPage';
 import ItemsPage from './pages/ItemsPage';
+import MyDonationsPage from './pages/MyDonationsPage';
 import NeedBoardPage from './pages/NeedBoardPage';
 import NeedDetailPage from './pages/NeedDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -33,6 +36,8 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/barang" element={<ItemsPage />} />
             <Route path="/barang/:id" element={<ItemDetailPage />} />
+            <Route path="/campaign" element={<CampaignsPage />} />
+            <Route path="/campaign/:slug" element={<CampaignDetailPage />} />
             <Route path="/need-board" element={<NeedBoardPage />} />
             <Route path="/need-board/:id" element={<NeedDetailPage />} />
             <Route path="/login" element={<AuthPage mode="login" />} />
@@ -67,6 +72,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <RequestsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/donasi-saya"
+              element={
+                <ProtectedRoute>
+                  <MyDonationsPage />
                 </ProtectedRoute>
               }
             />
