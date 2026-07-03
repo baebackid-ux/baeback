@@ -1,6 +1,6 @@
 import { ArrowLeft, Check, Flag, Heart, MapPin, MessageCircle, PackageCheck, ShieldCheck, Truck } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Badge from '../components/Badge';
 import ItemCard from '../components/ItemCard';
 import RequestModal from '../components/RequestModal';
@@ -12,6 +12,7 @@ import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export default function ItemDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [item, setItem] = useState(fallbackItems.find((entry) => entry.id === id) || fallbackItems[0]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -26,23 +27,51 @@ export default function ItemDetailPage() {
     loadItem();
   }, [id]);
 
+  function requireLogin() {
+    if (user) return true;
+    navigate('/login', { replace: true, state: { from: { pathname: `/barang/${id}` } } });
+    return false;
+  }
+
   async function handleRequest(payload) {
-    if (isSupabaseConfigured && user) await supabase.from('pickup_requests').insert({ item_id: item.id, requester_id: user.id, reason: payload.reason, planned_pickup_at: payload.planned_pickup_at || null, note: payload.note, status: 'submitted' });
+    if (!requireLogin()) return;
+    if (isSupabaseConfigured) {
+      const { error } = await supabase.from('pickup_requests').insert({ item_id: item.id, requester_id: user.id, reason: payload.reason, planned_pickup_at: payload.planned_pickup_at || null, note: payload.note, status: 'submitted' });
+      if (error) {
+        setNotice(error.message);
+        return;
+      }
+    }
     setModalOpen(false);
     setNotice('Pengajuanmu sudah terkirim. Pemberi akan meninjaunya terlebih dahulu.');
   }
 
   async function addFavorite() {
-    if (isSupabaseConfigured && user) await supabase.from('favorites').upsert({ user_id: user.id, item_id: item.id });
+    if (!requireLogin()) return;
+    if (isSupabaseConfigured) {
+      const { error } = await supabase.from('favorites').upsert({ user_id: user.id, item_id: item.id });
+      if (error) {
+        setNotice(error.message);
+        return;
+      }
+    }
     setNotice('Barang sudah disimpan ke Daftar Minat.');
   }
 
   async function reportItem() {
-    if (isSupabaseConfigured && user) await supabase.from('reports').insert({ reporter_id: user.id, item_id: item.id, reason: 'Barang perlu ditinjau', description: 'Pengguna meminta admin meninjau barang ini.' });
+    if (!requireLogin()) return;
+    if (isSupabaseConfigured) {
+      const { error } = await supabase.from('reports').insert({ reporter_id: user.id, item_id: item.id, reason: 'Barang perlu ditinjau', description: 'Pengguna meminta admin meninjau barang ini.' });
+      if (error) {
+        setNotice(error.message);
+        return;
+      }
+    }
     setNotice('Laporan sudah diterima. Tim BaeBack akan meninjaunya.');
   }
 
   const related = fallbackItems.filter((entry) => entry.id !== item.id && entry.category === item.category).concat(fallbackItems.filter((entry) => entry.id !== item.id)).slice(0, 3);
+  const requiresAuth = !user;
 
   return (
     <main className="detail-page">
@@ -64,8 +93,9 @@ export default function ItemDetailPage() {
           </div>
           <div className="donor-card"><span className="donor-avatar">{item.donor_name?.[0] || 'B'}</span><div><small>Dibagikan oleh</small><strong>{item.donor_name || 'Pemberi BaeBack'} <ShieldCheck size={15} /></strong><span>{item.post_type === 'official' ? 'Partner resmi BaeBack' : 'Anggota komunitas'}</span></div><Link to="/profil">Lihat profil</Link></div>
           {notice && <p className="success-note"><Check size={17} /> {notice}</p>}
-          <div className="detail-actions"><button className="btn btn-primary" onClick={() => setModalOpen(true)}>Ajukan ambil barang</button><button className="btn btn-secondary" onClick={addFavorite}><Heart size={17} /> Simpan</button></div>
-          <div className="detail-secondary-actions"><Link to="/pengajuan"><MessageCircle size={16} /> Tanya pemberi</Link><button onClick={reportItem}><Flag size={15} /> Laporkan</button></div>
+          {requiresAuth && <p className="detail-reassurance">Masuk dulu untuk mengajukan, menyimpan, atau melaporkan barang.</p>}
+          <div className="detail-actions"><button className="btn btn-primary" onClick={() => { if (requireLogin()) setModalOpen(true); }}>{requiresAuth ? 'Masuk untuk ajukan' : 'Ajukan ambil barang'}</button><button className="btn btn-secondary" onClick={addFavorite}>{requiresAuth ? 'Masuk untuk simpan' : <><Heart size={17} /> Simpan</>}</button></div>
+          <div className="detail-secondary-actions"><Link to={requiresAuth ? '/login' : '/pengajuan'}><MessageCircle size={16} /> {requiresAuth ? 'Masuk untuk tanya pemberi' : 'Tanya pemberi'}</Link><button onClick={reportItem}>{requiresAuth ? 'Masuk untuk lapor' : <><Flag size={15} /> Laporkan</>}</button></div>
           <p className="detail-reassurance"><ShieldCheck size={17} /> Pengajuan tidak menjamin persetujuan. Pemberi akan memilih berdasarkan kebutuhan dan kecocokan pengambilan.</p>
         </aside>
       </section>

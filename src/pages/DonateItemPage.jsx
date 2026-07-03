@@ -28,8 +28,44 @@ export default function DonateItemPage() {
     setForm((current) => ({ ...current, [key]: value }));
   }
 
+  // Compress image client-side to reduce upload size
+  async function compressImage(file, maxWidth = 1200, quality = 0.75) {
+    if (!file) return null;
+    const dataUrl = await new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onerror = rej;
+      reader.onload = () => res(reader.result);
+      reader.readAsDataURL(file);
+    });
+
+    const img = await new Promise((res, rej) => {
+      const image = new Image();
+      image.onload = () => res(image);
+      image.onerror = rej;
+      image.src = dataUrl;
+    });
+
+    const ratio = img.width / img.height;
+    const width = Math.min(maxWidth, img.width);
+    const height = Math.round(width / ratio);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, width, height);
+
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/jpeg', quality));
+    return blob ? new File([blob], (file.name || 'image').replace(/\.[^/.]+$/, '') + '.jpg', { type: 'image/jpeg' }) : null;
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
+    if (!user) {
+      navigate('/login', { replace: true, state: { from: { pathname: '/donasikan' } } });
+      return;
+    }
+
     let imageUrl = form.image_url;
     let uploadedStoragePath = '';
 
@@ -124,7 +160,33 @@ export default function DonateItemPage() {
           <span>Lokasi umum</span>
           <input required value={form.location} onChange={(event) => update('location', event.target.value)} placeholder="Contoh: Bandung" />
         </label>
-        <label className="upload-field"><ImagePlus size={27} /><strong>{imageFile ? imageFile.name : 'Tambahkan foto barang'}</strong><span>PNG atau JPG, gunakan foto yang jelas</span><input type="file" accept="image/*" onChange={(event) => setImageFile(event.target.files?.[0] || null)} /></label>
+        <label className="upload-field"><ImagePlus size={27} /><strong>{imageFile ? imageFile.name : 'Tambahkan foto barang'}</strong><span>PNG atau JPG, gunakan foto yang jelas</span>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={async (event) => {
+              const file = event.target.files?.[0] || null;
+              if (!file) {
+                setImageFile(null);
+                return;
+              }
+              try {
+                const originalSize = Math.round(file.size / 1024);
+                const compressed = await compressImage(file, 1200, 0.75);
+                if (compressed) {
+                  const compressedSize = Math.round(compressed.size / 1024);
+                  setImageFile(compressed);
+                  setNotice(`Gambar dikompresi: ${originalSize}KB → ${compressedSize}KB`);
+                } else {
+                  setImageFile(file);
+                }
+              } catch {
+                setImageFile(file);
+                setNotice('Gagal mengompresi gambar — menggunakan file asli.');
+              }
+            }}
+          />
+        </label>
         <label><span>URL foto alternatif <small>opsional</small></span><input value={form.image_url} onChange={(event) => update('image_url', event.target.value)} placeholder="https://..." /></label>
         <div className="form-section-heading"><span>02</span><div><h2>Deskripsi dan kesepakatan</h2><p>Bantu penerima memahami barang sebelum mengajukan.</p></div></div><label>
           <span>Deskripsi barang</span>

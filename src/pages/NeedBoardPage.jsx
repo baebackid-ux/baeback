@@ -1,5 +1,6 @@
 import { ArrowRight, HandHeart, Plus, Search, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import NeedCard from '../components/NeedCard';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,6 +15,8 @@ export default function NeedBoardPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState({ title: '', category: socialCategories[0], location: '', urgency: 'Masih Dibutuhkan', description: '' });
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const needsLogin = !user;
 
   useEffect(() => {
     if (!isSupabaseConfigured) return;
@@ -31,6 +34,11 @@ export default function NeedBoardPage() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    if (!user) {
+      navigate('/login', { replace: true, state: { from: { pathname: '/need-board' } } });
+      return;
+    }
+
     const payload = { ...form, requester_id: user?.id, status: 'open' };
     if (isSupabaseConfigured) {
       const { data } = await supabase.from('need_posts').insert(payload).select('*').single();
@@ -51,7 +59,7 @@ export default function NeedBoardPage() {
 
       <div className="container need-board-controls">
         <div className="need-search"><Search size={19} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cari kebutuhan atau lokasi..." /></div>
-        <button className="btn btn-primary" onClick={() => setFormOpen(true)}><Plus size={18} /> Tulis kebutuhan</button>
+        <button className="btn btn-primary" onClick={() => (user ? setFormOpen(true) : navigate('/login', { replace: true, state: { from: { pathname: '/need-board' } } }))}><Plus size={18} /> {needsLogin ? 'Masuk untuk menulis' : 'Tulis kebutuhan'}</button>
       </div>
 
       <section className="container need-board-layout">

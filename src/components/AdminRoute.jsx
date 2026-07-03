@@ -1,11 +1,13 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function AdminRoute({ children }) {
-  const { isAdmin, loading } = useAuth();
+  const location = useLocation();
+  const { isAuthenticated, isAdmin, loading } = useAuth();
 
   if (loading) return <main className="container page-shell">Memuat akses...</main>;
-  if (!isAdmin) return <Navigate to="/dashboard" replace />;
+  if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: location }} />;
+  if (!isAdmin) return <Navigate to="/unauthorized" replace />;
 
   return children;
 }

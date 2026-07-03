@@ -9,7 +9,7 @@ import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export default function RequestsPage() {
   const [requests, setRequests] = useState(fallbackRequests);
-  const { user } = useAuth();
+  const { user, isAdmin, incrementKindnessPointsLocal } = useAuth();
 
   useEffect(() => {
     if (!isSupabaseConfigured || !user) return;
@@ -34,16 +34,23 @@ export default function RequestsPage() {
     loadRequests();
   }, [user]);
 
+  const visibleRequests = requests.filter((request) => isAdmin || request.requester_id === user?.id || request.donor_id === user?.id);
+
   async function updateStatus(id, status) {
     const request = requests.find((entry) => entry.id === id);
     if (isSupabaseConfigured) {
-      await supabase.from('pickup_requests').update({ status }).eq('id', id);
+      const { error } = await supabase.from('pickup_requests').update({ status }).eq('id', id);
+      if (error) {
+        return;
+      }
       if (request?.item_id && status === 'approved') {
         await supabase.from('items').update({ status: 'reserved' }).eq('id', request.item_id);
       }
       if (request?.item_id && status === 'received') {
         await supabase.from('items').update({ status: 'received' }).eq('id', request.item_id);
       }
+    } else if (status === 'received') {
+      incrementKindnessPointsLocal(10, user?.id);
     }
     setRequests((current) => current.map((request) => (request.id === id ? { ...request, status } : request)));
   }
@@ -72,27 +79,34 @@ export default function RequestsPage() {
        </div><div className="request-legend"><span><i className="legend-pending" /> Menunggu</span><span><i className="legend-done" /> Selesai</span></div>
       </div>
       <div className="container request-list detailed-request-list">
-        {requests.map((request) => (
+        {visibleRequests.map((request) => (
           <article className="request-row" key={request.id}>
             <div className="request-main"><span className="request-avatar">{request.requester_name?.[0] || 'P'}</span><div><small>Pengajuan dari {request.requester_name}</small><strong>{request.item_title}</strong><p>“{request.reason}”</p></div></div>
             <StatusPill status={request.status}>{getRequestStatusLabel(request.status)}</StatusPill>
-            <div className="row-actions">
-              <button className="action-approve" title="Setujui" onClick={() => updateStatus(request.id, 'approved')}>
-                <CheckCircle2 size={17} /> Setujui
-              </button>
-              <button title="Tolak" onClick={() => updateStatus(request.id, 'rejected')}>
-                <XCircle size={17} /> Tolak
-              </button>
-              <button title="Chat" onClick={() => updateStatus(request.id, 'waiting_pickup')}>
-                <MessageCircle size={17} /> Chat
-              </button>
-              <button title="Sudah diterima" onClick={() => updateStatus(request.id, 'received')}>
-                <CheckCircle2 size={17} /> Diterima
-              </button>
-              <button title="Beri rating" onClick={() => giveRating(request)}>
-                <Star size={17} /> Rating
-              </button>
-            </div>
+            {(isAdmin || request.donor_id === user?.id) && (
+              <div className="row-actions">
+                <button className="action-approve" title="Setujui" onClick={() => updateStatus(request.id, 'approved')}>
+                  <CheckCircle2 size={17} /> Setujui
+                </button>
+                <button title="Tolak" onClick={() => updateStatus(request.id, 'rejected')}>
+                  <XCircle size={17} /> Tolak
+                </button>
+                <button title="Chat" onClick={() => updateStatus(request.id, 'waiting_pickup')}>
+                  <MessageCircle size={17} /> Chat
+                </button>
+                <button title="Sudah diterima" onClick={() => updateStatus(request.id, 'received')}>
+                  <CheckCircle2 size={17} /> Diterima
+                </button>
+                {!isSupabaseConfigured && (
+                  <button title="Sudah diterima (demo)" onClick={() => updateStatus(request.id, 'received')}>
+                    <CheckCircle2 size={17} /> Diterima (demo)
+                  </button>
+                )}
+                <button title="Beri rating" onClick={() => giveRating(request)}>
+                  <Star size={17} /> Rating
+                </button>
+              </div>
+            )}
           </article>
         ))}
       </div>

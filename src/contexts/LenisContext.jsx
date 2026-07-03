@@ -54,16 +54,16 @@ export function LenisProvider({ children }) {
     }
 
     if (scrollTarget) {
-      scrollTarget.scrollIntoView({ behavior: 'auto', block: 'start' });
+      scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
 
     if (lenisRef.current) {
-      lenisRef.current.scrollTo(0, { immediate: true });
+      lenisRef.current.scrollTo(0, { duration: 0.85, easing: anchorEasing });
       return;
     }
 
-    window.scrollTo({ top: 0, behavior: 'auto' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [hash, pathname]);
 
   const value = useMemo(() => ({ lenis }), [lenis]);

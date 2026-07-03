@@ -64,8 +64,8 @@ export default function Navbar() {
               {item.label}
             </NavLink>
           ))}
-          <Link className="btn btn-primary" to="/donasikan" onClick={() => setOpen(false)}>
-            Bagikan barang
+          <Link className="btn btn-primary" to={isAuthenticated ? '/donasikan' : '/login'} onClick={() => setOpen(false)}>
+            {isAuthenticated ? 'Bagikan barang' : 'Masuk untuk berbagi'}
           </Link>
           {isAuthenticated ? (
             <div className="account-menu">

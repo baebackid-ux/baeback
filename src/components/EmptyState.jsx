@@ -1,10 +1,10 @@
 import { Box, HeartHandshake } from 'lucide-react';
 
-export default function EmptyState({ title, description, action }) {
+export default function EmptyState({ title, description, action, icon }) {
   return (
     <div className="empty-state">
       <div className="empty-state-icon">
-        <Box size={28} aria-hidden="true" />
+        {icon || <Box size={28} aria-hidden="true" />}
         <HeartHandshake size={18} aria-hidden="true" />
       </div>
       <h3>{title}</h3>
