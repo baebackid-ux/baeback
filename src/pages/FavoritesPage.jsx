@@ -10,7 +10,7 @@ import { fallbackItems } from '../data/mockData';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export default function FavoritesPage() {
-  const [savedItems, setSavedItems] = useState(fallbackItems.slice(0, 2));
+  const [savedItems, setSavedItems] = useState(isSupabaseConfigured ? [] : fallbackItems.slice(0, 2));
   const { user } = useAuth();
 
   useEffect(() => {

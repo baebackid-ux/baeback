@@ -41,11 +41,11 @@ export default function DashboardPage() {
 
       if (!mounted) return;
 
-      const ownedItems = itemsResult.data ?? fallbackItems.slice(0, 3);
-      const visibleRequests = requestsResult.data ?? fallbackRequests;
+      const ownedItems = itemsResult.data ?? [];
+      const visibleRequests = requestsResult.data ?? [];
       const savedItems = (favoritesResult.data ?? []).map((entry) => entry.item).filter(Boolean);
       const userNeeds = needsResult.data ?? [];
-
+ 
       setDashboardData({
         items: ownedItems,
         requests: visibleRequests.filter((request) => request.requester_id === user.id || request.item?.donor_id === user.id),
@@ -54,14 +54,14 @@ export default function DashboardPage() {
         loading: false,
       });
     }
-
+ 
     loadDashboard().catch(() => {
       if (!mounted) return;
       setDashboardData({
-        items: fallbackItems.slice(0, 3),
-        requests: fallbackRequests.slice(0, 3),
-        favorites: fallbackItems.slice(0, 2),
-        needs: fallbackNeeds.slice(0, 2),
+        items: isSupabaseConfigured ? [] : fallbackItems.slice(0, 3),
+        requests: isSupabaseConfigured ? [] : fallbackRequests.slice(0, 3),
+        favorites: isSupabaseConfigured ? [] : fallbackItems.slice(0, 2),
+        needs: isSupabaseConfigured ? [] : fallbackNeeds.slice(0, 2),
         loading: false,
       });
     });

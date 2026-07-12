@@ -25,9 +25,9 @@ import { buildOrganizationJsonLd, buildWebSiteJsonLd, DEFAULT_DESCRIPTION } from
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export default function HomePage() {
-  const [items, setItems] = useState(fallbackItems);
-  const [needs, setNeeds] = useState(fallbackNeeds);
-  const [impact, setImpact] = useState(fallbackImpact);
+  const [items, setItems] = useState(isSupabaseConfigured ? [] : fallbackItems);
+  const [needs, setNeeds] = useState(isSupabaseConfigured ? [] : fallbackNeeds);
+  const [impact, setImpact] = useState(isSupabaseConfigured ? [] : fallbackImpact);
 
   useEffect(() => {
     if (!isSupabaseConfigured) return;
@@ -37,9 +37,9 @@ export default function HomePage() {
         supabase.from('need_posts').select('*').in('status', ['open', 'offered']).order('created_at', { ascending: false }).limit(3),
         supabase.from('impact_stats').select('label,value').order('sort_order'),
       ]);
-      if (itemData?.length) setItems(itemData);
-      if (needData?.length) setNeeds(needData);
-      if (impactData?.length) setImpact(impactData);
+      setItems(itemData ?? []);
+      setNeeds(needData ?? []);
+      setImpact(impactData ?? []);
     }
     loadHome();
   }, []);
@@ -73,14 +73,14 @@ export default function HomePage() {
 
           <div className="hero-editorial" aria-label="Pilihan barang BaeBack">
             <div className="hero-editorial-note"><span>Hari ini di BaeBack</span><strong>8 barang baru siap menemukan rumah keduanya.</strong></div>
-            <Link to={`/barang/${items[0]?.id}`} className="hero-featured-card">
-              <img src={items[0]?.image_url} alt={items[0]?.title} />
+            <Link to={items[0]?.id ? `/barang/${items[0].id}` : '/donasikan'} className="hero-featured-card">
+              <img src={items[0]?.image_url || 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=900&q=80'} alt={items[0]?.title || 'Mari berbagi'} />
               <span className="free-label">Untuk dibagikan</span>
-              <div><small>{items[0]?.category}</small><strong>{items[0]?.title}</strong><span>{items[0]?.location} · {items[0]?.condition}</span></div>
+              <div><small>{items[0]?.category || 'BaeBack'}</small><strong>{items[0]?.title || 'Bagikan barang pertama Anda'}</strong><span>{items[0]?.location || 'Indonesia'} · {items[0]?.condition || 'Layak Pakai'}</span></div>
             </Link>
-            <Link to={`/barang/${items[1]?.id}`} className="hero-side-card">
-              <img src={items[1]?.image_url} alt={items[1]?.title} />
-              <div><small>Baru dibagikan</small><strong>{items[1]?.title}</strong></div>
+            <Link to={items[1]?.id ? `/barang/${items[1].id}` : '/barang'} className="hero-side-card">
+              <img src={items[1]?.image_url || 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=900&q=80'} alt={items[1]?.title || 'Mulai menjelajah'} />
+              <div><small>Baru dibagikan</small><strong>{items[1]?.title || 'Bantu sesama di sekitar Anda'}</strong></div>
             </Link>
             <div className="hero-impact-seal"><HeartHandshake size={22} /><strong>1.240+</strong><span>barang kembali<br />bermanfaat</span></div>
           </div>
