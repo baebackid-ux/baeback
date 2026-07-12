@@ -1,86 +1,14 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 const AuthContext = createContext(null);
-const demoSessionKey = 'baeback-demo-session';
-
-export const demoAccounts = {
-  user: {
-    email: 'user@baeback.local',
-    password: 'user123456',
-    profile: {
-      id: 'demo-user',
-      full_name: 'BaeBack User',
-      role: 'user',
-      location: 'Bandung',
-      badge: 'helpful_member',
-      kindness_points: 120,
-      rating_average: 4.8,
-    },
-  },
-  admin: {
-    email: 'admin@baeback.local',
-    password: 'admin123456',
-    profile: {
-      id: 'demo-admin',
-      full_name: 'BaeBack Admin',
-      role: 'admin',
-      location: 'Bandung',
-      badge: 'trusted_donor',
-      kindness_points: 260,
-      rating_average: 5,
-    },
-  },
-};
-
-function createDemoSession(accountKey) {
-  const account = demoAccounts[accountKey];
-  if (!account) return null;
-
-  return {
-    user: {
-      id: account.profile.id,
-      email: account.email,
-      user_metadata: { full_name: account.profile.full_name },
-    },
-  };
-}
-
-function createDemoProfile(accountKey) {
-  const account = demoAccounts[accountKey];
-  return account ? { ...account.profile } : null;
-}
-
-function readStoredDemoSession() {
-  if (typeof window === 'undefined') return null;
-
-  const storedKey = window.localStorage.getItem(demoSessionKey);
-  return storedKey ? createDemoSession(storedKey) : null;
-}
-
-function persistDemoSession(accountKey) {
-  if (typeof window === 'undefined') return;
-
-  window.localStorage.setItem(demoSessionKey, accountKey);
-}
-
-function clearDemoSession() {
-  if (typeof window === 'undefined') return;
-
-  window.localStorage.removeItem(demoSessionKey);
-}
 
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(isSupabaseConfigured ? null : readStoredDemoSession());
-  const [profile, setProfile] = useState(isSupabaseConfigured ? null : createDemoProfile(typeof window !== 'undefined' ? window.localStorage.getItem(demoSessionKey) : null));
-  const [loading, setLoading] = useState(isSupabaseConfigured);
+  const [session, setSession] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false);
-      return undefined;
-    }
-
     let mounted = true;
 
     async function loadSession() {
@@ -113,7 +41,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function ensureProfile(user) {
-    if (!supabase || !user) return null;
+    if (!user) return null;
 
     const { data: existing } = await supabase.from('profiles').select('*').eq('id', user.id).single();
     if (existing) {
@@ -135,25 +63,10 @@ export function AuthProvider({ children }) {
   }
 
   async function signIn(email, password) {
-    if (!supabase) {
-      const matchedAccountKey = Object.entries(demoAccounts).find(([, account]) => account.email === email && account.password === password)?.[0];
-
-      if (!matchedAccountKey) {
-        return { error: new Error('Akun demo tidak ditemukan. Gunakan email dan kata sandi demo yang tersedia.') };
-      }
-
-      const nextSession = createDemoSession(matchedAccountKey);
-      setSession(nextSession);
-      setProfile(createDemoProfile(matchedAccountKey));
-      persistDemoSession(matchedAccountKey);
-      return { data: nextSession };
-    }
-
     return supabase.auth.signInWithPassword({ email, password });
   }
 
   async function signUp(email, password, fullName) {
-    if (!supabase) return { error: new Error('Mode demo tidak mendukung registrasi. Gunakan akun user atau admin demo yang tersedia.') };
     return supabase.auth.signUp({
       email,
       password,
@@ -162,25 +75,11 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    if (!supabase) {
-      setSession(null);
-      setProfile(null);
-      clearDemoSession();
-      return;
-    }
-
     await supabase.auth.signOut();
   }
 
-  // Increment kindness points locally when Supabase is not configured.
-  function incrementKindnessPointsLocal(amount = 1, userId = null) {
-    if (isSupabaseConfigured) return;
-    setProfile((p) => {
-      if (!p) return p;
-      // only modify current user's profile
-      if (userId && p.id !== userId) return p;
-      return { ...p, kindness_points: (p.kindness_points || 0) + amount };
-    });
+  function incrementKindnessPointsLocal() {
+    // No-op in production mode
   }
 
   const value = useMemo(
@@ -195,7 +94,6 @@ export function AuthProvider({ children }) {
       signIn,
       signUp,
       signOut,
-      demoAccounts,
     }),
     [session, profile, loading],
   );
@@ -210,3 +108,4 @@ export function useAuth() {
   }
   return context;
 }
+
