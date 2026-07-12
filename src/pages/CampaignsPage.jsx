@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { HeartHandshake } from 'lucide-react';
 import CampaignCard from '../components/CampaignCard';
 import EmptyState from '../components/EmptyState';
+import SEO from '../components/SEO';
 import { CardGridSkeleton } from '../components/Skeleton';
 import { fallbackCampaigns } from '../data/mockData';
 import { fetchCampaigns, checkApiHealth } from '../lib/api';
@@ -36,6 +37,11 @@ export default function CampaignsPage() {
 
   return (
     <main className="page-shell">
+      <SEO
+        title="Campaign Kebaikan"
+        description="Dukung campaign kebaikan BaeBack. Donasi aman melalui backend terverifikasi untuk bantuan pendidikan, bencana, dan komunitas."
+        path="/campaign"
+      />
       <section className="page-header">
         <div className="container">
           <span className="eyebrow"><HeartHandshake size={14} /> Campaign Donasi</span>

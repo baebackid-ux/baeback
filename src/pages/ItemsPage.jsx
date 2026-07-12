@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import ItemCard from '../components/ItemCard';
 import SearchFilters from '../components/SearchFilters';
+import SEO from '../components/SEO';
 import { CardGridSkeleton, ItemCardSkeleton } from '../components/Skeleton';
 import { fallbackItems } from '../data/mockData';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
@@ -118,9 +119,17 @@ export default function ItemsPage() {
   }, [loaderRef.current, hasMore, loading]);
 
   const filteredItems = items;
+  const seoDescription = filters.category
+    ? `Jelajahi barang gratis kategori ${filters.category} di BaeBack. Temukan barang layak pakai tanpa biaya.`
+    : 'Jelajahi katalog barang layak pakai gratis dari komunitas BaeBack. Temukan barang berdasarkan kebutuhan, bukan harga.';
 
   return (
     <main className="page-shell catalog-page">
+      <SEO
+        title="Jelajahi Barang Gratis"
+        description={seoDescription}
+        path="/barang"
+      />
       <header className="container page-heading catalog-heading">
         <span className="eyebrow">Katalog komunitas</span>
         <h1>Barang baik, siap<br /><em>dipakai kembali.</em></h1>

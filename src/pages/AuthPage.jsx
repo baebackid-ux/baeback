@@ -1,6 +1,7 @@
 import { ArrowRight, Check, HeartHandshake, ShieldCheck, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 import { demoAccounts, useAuth } from '../contexts/AuthContext';
 import { isSupabaseConfigured } from '../lib/supabase';
 
@@ -50,6 +51,12 @@ export default function AuthPage({ mode }) {
 
     return (
       <main className="auth-page">
+        <SEO
+          title={isRegister ? 'Daftar' : 'Masuk'}
+          description="Masuk atau daftar akun BaeBack untuk berbagi barang, mengajukan kebutuhan, dan ikut campaign kebaikan."
+          path={isRegister ? '/register' : '/login'}
+          noindex
+        />
         <section className="auth-story">
           <Link to="/" className="brand">
             <span className="brand-mark"><HeartHandshake size={21} /></span>

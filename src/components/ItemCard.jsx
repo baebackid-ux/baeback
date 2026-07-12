@@ -11,7 +11,7 @@ export default function ItemCard({ item }) {
     <article className="item-card">
       <Link to={`/barang/${item.id}`} className="item-image-wrap">
         {item.image_url ? (
-          <img src={item.image_url} alt={item.title} className="item-image" />
+          <img src={item.image_url} alt={item.title} className="item-image" loading="lazy" decoding="async" />
         ) : (
           <div className="image-placeholder">
             <Gift size={34} />

@@ -1,5 +1,6 @@
 import { ArrowLeft, ShieldAlert } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function AccessDeniedPage() {
@@ -7,6 +8,7 @@ export default function AccessDeniedPage() {
 
   return (
     <main className="not-found-page">
+      <SEO title="Akses Ditolak" noindex />
       <div className="not-found-mark"><ShieldAlert size={34} /><span>403</span></div>
       <div>
         <span className="eyebrow">Akses dibatasi</span>

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import NeedCard from '../components/NeedCard';
+import SEO from '../components/SEO';
 import { useAuth } from '../contexts/AuthContext';
 import { fallbackNeeds } from '../data/mockData';
 import { socialCategories } from '../lib/constants';
@@ -50,6 +51,11 @@ export default function NeedBoardPage() {
 
   return (
     <main className="need-board-page">
+      <SEO
+        title="Need Board"
+        description="Temukan kebutuhan nyata komunitas di Need Board BaeBack. Tawarkan barang yang cocok dan bantu orang yang membutuhkan."
+        path="/need-board"
+      />
       <header className="need-board-hero">
         <div className="container need-board-hero-grid">
           <div><span className="eyebrow">Ruang kebutuhan komunitas</span><h1>Mungkin sederhana bagimu.<br /><em>Bisa berarti besar bagi mereka.</em></h1><p>Temukan kebutuhan nyata di sekitar kita, lalu tawarkan barang yang bisa kembali bermanfaat.</p></div>

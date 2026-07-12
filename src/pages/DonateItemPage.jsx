@@ -1,6 +1,7 @@
 import { Check, ImagePlus, Info, UploadCloud } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 import { useAuth } from '../contexts/AuthContext';
 import { categories, itemConditions, pickupMethods } from '../lib/constants';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
@@ -114,6 +115,7 @@ export default function DonateItemPage() {
 
   return (
     <main className="donate-page">
+      <SEO title="Bagikan Barang" noindex />
       <header className="container donate-heading"><div><span className="eyebrow">Bagikan barang</span><h1>Satu barang.<br /><em>Satu manfaat baru.</em></h1><p>Ceritakan kondisinya dengan jujur. Informasi yang baik membantu barangmu menemukan orang yang tepat.</p></div><ol><li className="active"><span>1</span> Detail barang</li><li><span>2</span> Cara pengambilan</li><li><span>3</span> Publikasikan</li></ol></header>
       <div className="container donate-layout">
       <aside className="donate-guidance"><Info size={20} /><h2>Sebelum mengunggah</h2><ul><li><Check size={15} /> Pastikan barang masih aman dan layak digunakan.</li><li><Check size={15} /> Gunakan foto yang terang dan sesuai kondisi nyata.</li><li><Check size={15} /> Hindari mencantumkan alamat lengkap di deskripsi.</li></ul></aside><div>

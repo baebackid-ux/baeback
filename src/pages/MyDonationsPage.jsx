@@ -2,6 +2,7 @@ import { HeartHandshake } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
+import SEO from '../components/SEO';
 import { DonationListSkeleton } from '../components/Skeleton';
 import { fallbackDonations } from '../data/mockData';
 import { checkApiHealth, fetchMyDonations } from '../lib/api';
@@ -34,6 +35,7 @@ export default function MyDonationsPage() {
 
   return (
     <main className="page-shell">
+      <SEO title="Donasi Saya" noindex />
       <section className="page-header">
         <div className="container">
           <span className="eyebrow"><HeartHandshake size={14} /> Riwayat Donasi</span>

@@ -1,9 +1,11 @@
 import { ArrowLeft, HeartHandshake } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 export default function NotFoundPage() {
   return (
     <main className="not-found-page">
+      <SEO title="Halaman Tidak Ditemukan" noindex />
       <div className="not-found-mark"><HeartHandshake size={34} /><span>404</span></div>
       <div>
         <span className="eyebrow">Sepertinya kita tersesat</span><h1>Halaman ini belum<br /><em>menemukan rumahnya.</em></h1>

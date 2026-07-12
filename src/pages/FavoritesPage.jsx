@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import AccountNav from '../components/AccountNav';
 import ItemCard from '../components/ItemCard';
+import SEO from '../components/SEO';
 import { useAuth } from '../contexts/AuthContext';
 import { fallbackItems } from '../data/mockData';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
@@ -32,6 +33,7 @@ export default function FavoritesPage() {
 
   return (
     <main className="account-page favorites-page">
+      <SEO title="Daftar Minat" noindex />
       <div className="container"><AccountNav /></div>
       <div className="container page-heading">
         <span className="eyebrow">Daftar Minat</span>

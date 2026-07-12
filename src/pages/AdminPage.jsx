@@ -1,6 +1,7 @@
 import { ArrowRight, Flag, ShieldCheck, UploadCloud, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ItemCard from '../components/ItemCard';
+import SEO from '../components/SEO';
 import StatusPill from '../components/StatusPill';
 import { StatCardSkeleton } from '../components/Skeleton';
 import { fallbackItems } from '../data/mockData';
@@ -61,6 +62,7 @@ export default function AdminPage() {
 
   return (
     <main className="admin-page">
+      <SEO title="Admin" noindex />
       <div className="container admin-topbar"><span><ShieldCheck size={16} /> Ruang pengelola</span><span>Admin BaeBack</span></div>
       <div className="container page-heading split-heading">
         <div>

@@ -4,17 +4,23 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import Badge from '../components/Badge';
 import ItemCard from '../components/ItemCard';
 import RequestModal from '../components/RequestModal';
+import SEO from '../components/SEO';
 import StatusPill from '../components/StatusPill';
 import { useAuth } from '../contexts/AuthContext';
 import { fallbackItems } from '../data/mockData';
-import { getItemStatusLabel, getPostTypeLabel } from '../lib/formatters';
+import { getItemStatusLabel, getPostTypeLabel, summarizeText } from '../lib/formatters';
+import { buildProductJsonLd } from '../lib/seo';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export default function ItemDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [item, setItem] = useState(fallbackItems.find((entry) => entry.id === id) || fallbackItems[0]);
+  const [item, setItem] = useState(() => {
+    const initial = typeof window === 'undefined' ? globalThis.__INITIAL_DATA__?.item : window.__INITIAL_DATA__?.item;
+    if (initial && String(initial.id) === String(id)) return initial;
+    return fallbackItems.find((entry) => entry.id === id) || fallbackItems[0];
+  });
   const [modalOpen, setModalOpen] = useState(false);
   const [notice, setNotice] = useState('');
 
@@ -75,6 +81,14 @@ export default function ItemDetailPage() {
 
   return (
     <main className="detail-page">
+      <SEO
+        title={`${item.title} — Gratis`}
+        description={summarizeText(item.description, 155) || `${item.title} — barang gratis di BaeBack, ${item.location}.`}
+        path={`/barang/${item.id}`}
+        image={item.image_url}
+        type="product"
+        jsonLd={buildProductJsonLd(item)}
+      />
       <div className="container detail-breadcrumb"><Link to="/barang"><ArrowLeft size={16} /> Kembali ke katalog</Link><span>/</span><span>{item.category}</span></div>
       <section className="container detail-grid">
         <div className="detail-media">

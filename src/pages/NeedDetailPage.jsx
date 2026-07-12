@@ -2,10 +2,12 @@ import { ArrowLeft, Check, HandHeart, MapPin, ShieldCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Badge from '../components/Badge';
+import SEO from '../components/SEO';
 import StatusPill from '../components/StatusPill';
 import { useAuth } from '../contexts/AuthContext';
 import { fallbackNeeds } from '../data/mockData';
-import { getNeedStatusLabel } from '../lib/formatters';
+import { getNeedStatusLabel, summarizeText } from '../lib/formatters';
+import { buildNeedJsonLd } from '../lib/seo';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export default function NeedDetailPage() {
@@ -13,7 +15,11 @@ export default function NeedDetailPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const needsLogin = !user;
-  const [need, setNeed] = useState(fallbackNeeds.find((entry) => entry.id === id) || fallbackNeeds[0]);
+  const [need, setNeed] = useState(() => {
+    const initial = typeof window === 'undefined' ? globalThis.__INITIAL_DATA__?.need : window.__INITIAL_DATA__?.need;
+    if (initial && String(initial.id) === String(id)) return initial;
+    return fallbackNeeds.find((entry) => entry.id === id) || fallbackNeeds[0];
+  });
   const [message, setMessage] = useState('');
   const [notice, setNotice] = useState('');
 
@@ -46,6 +52,12 @@ export default function NeedDetailPage() {
 
   return (
     <main className="need-detail-page">
+      <SEO
+        title={need.title}
+        description={summarizeText(need.description, 155) || `${need.title} — kebutuhan komunitas di ${need.location}.`}
+        path={`/need-board/${need.id}`}
+        jsonLd={buildNeedJsonLd(need)}
+      />
       <div className="container detail-breadcrumb"><Link to="/need-board"><ArrowLeft size={16} /> Kembali ke Need Board</Link></div>
       <div className="container need-detail-grid">
         <article className="need-detail-story"><div className="card-badges"><Badge tone="yellow" icon="urgent">{need.urgency || 'Need Board'}</Badge><StatusPill status={need.status}>{getNeedStatusLabel(need.status)}</StatusPill></div><span className="detail-category">{need.category}</span><h1>{need.title}</h1><div className="need-detail-location"><MapPin size={18} /> {need.location}</div><div className="need-story-copy"><span className="eyebrow">Kebutuhannya</span><p>{need.description}</p></div><div className="need-safety-note"><ShieldCheck size={19} /><p>Jaga privasi. Detail kontak dan lokasi spesifik sebaiknya dibagikan setelah tawaran diterima.</p></div></article>

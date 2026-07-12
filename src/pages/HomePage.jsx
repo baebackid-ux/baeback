@@ -17,9 +17,11 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ImpactCounter from '../components/ImpactCounter';
 import ItemCard from '../components/ItemCard';
+import SEO from '../components/SEO';
 import StepTimeline from '../components/StepTimeline';
 import { fallbackImpact, fallbackItems, fallbackNeeds } from '../data/mockData';
 import { categories } from '../lib/constants';
+import { buildOrganizationJsonLd, buildWebSiteJsonLd, DEFAULT_DESCRIPTION } from '../lib/seo';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export default function HomePage() {
@@ -47,12 +49,16 @@ export default function HomePage() {
 
   return (
     <main>
+      <SEO
+        description={DEFAULT_DESCRIPTION}
+        path="/"
+        jsonLd={[buildOrganizationJsonLd(), buildWebSiteJsonLd()]}
+      />
       <section className="hero hero-full">
         <div className="container hero-grid hero-full-grid">
           <div className="hero-copy">
             <span className="hero-kicker"><Sparkles size={14} /> Komunitas berbagi barang</span>
             <h1>Berbagi barang baik, dengan cara yang terasa ringan.</h1>
-            <p>BaeBack mempertemukan barang layak pakai dengan orang yang benar-benar membutuhkannya. Tanpa harga, tanpa checkout, hanya cerita baru yang dimulai dengan tenang.</p>
             <p>BaeBack mempertemukan barang layak pakai dengan orang yang benar-benar membutuhkannya—hangat, aman, dan tanpa biaya.</p>
             <div className="hero-actions">
               <Link className="btn btn-primary" to="/barang">Jelajahi barang <ArrowRight size={17} /></Link>

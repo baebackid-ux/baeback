@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import AccountNav from '../components/AccountNav';
 import EmptyState from '../components/EmptyState';
 import ItemCard from '../components/ItemCard';
+import SEO from '../components/SEO';
 import StatusPill from '../components/StatusPill';
 import { DashboardSkeleton } from '../components/Skeleton';
 import { useAuth } from '../contexts/AuthContext';
@@ -203,6 +204,7 @@ export default function DashboardPage() {
 
   return (
     <main className="account-page">
+      <SEO title="Dashboard" noindex />
       <div className="container"><AccountNav /></div>
       <header className="container account-heading">
         <div>

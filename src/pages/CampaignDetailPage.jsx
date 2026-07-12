@@ -2,20 +2,24 @@ import { ArrowLeft, Check, HeartHandshake, ShieldCheck, Target } from 'lucide-re
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Badge from '../components/Badge';
+import SEO from '../components/SEO';
 import StatusPill from '../components/StatusPill';
 import { useAuth } from '../contexts/AuthContext';
 import { fallbackCampaigns } from '../data/mockData';
 import { checkApiHealth, fetchCampaign, submitDonation } from '../lib/api';
-import { formatCurrency, formatDate, getCampaignProgress } from '../lib/formatters';
+import { formatCurrency, formatDate, getCampaignProgress, summarizeText } from '../lib/formatters';
+import { buildCampaignJsonLd } from '../lib/seo';
 import { isSupabaseConfigured } from '../lib/supabase';
 
 export default function CampaignDetailPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [campaign, setCampaign] = useState(
-    fallbackCampaigns.find((c) => c.slug === slug) || fallbackCampaigns[0],
-  );
+  const [campaign, setCampaign] = useState(() => {
+    const initial = typeof window === 'undefined' ? globalThis.__INITIAL_DATA__?.campaign : window.__INITIAL_DATA__?.campaign;
+    if (initial && String(initial.slug) === String(slug)) return initial;
+    return fallbackCampaigns.find((c) => c.slug === slug) || fallbackCampaigns[0];
+  });
   const [amount, setAmount] = useState('');
   const [message, setMessage] = useState('');
   const [notice, setNotice] = useState('');
@@ -64,8 +68,8 @@ export default function CampaignDetailPage() {
       return;
     }
 
-    if (!apiReady || !isSupabaseConfigured) {
-      setError('Donasi memerlukan backend API dan Supabase yang aktif.');
+    if (!isSupabaseConfigured) {
+      setError('Donasi memerlukan konfigurasi Supabase yang aktif.');
       return;
     }
 
@@ -102,6 +106,13 @@ export default function CampaignDetailPage() {
 
   return (
     <main className="detail-page">
+      <SEO
+        title={campaign.title}
+        description={summarizeText(campaign.description, 155) || `Dukung campaign ${campaign.title} di BaeBack.`}
+        path={`/campaign/${campaign.slug}`}
+        image={campaign.image_url}
+        jsonLd={buildCampaignJsonLd(campaign)}
+      />
       <div className="container detail-breadcrumb">
         <Link to="/campaign"><ArrowLeft size={16} /> Kembali ke Campaign</Link>
       </div>
@@ -135,7 +146,7 @@ export default function CampaignDetailPage() {
           )}
           <div className="need-safety-note">
             <ShieldCheck size={19} />
-            <p>Donasi diproses melalui backend aman. Data sensitif tidak pernah disimpan atau dikirim langsung dari browser ke database.</p>
+            <p>Donasi dicatat langsung secara aman ke database melalui Supabase Client dengan kebijakan keamanan RLS.</p>
           </div>
         </article>
 

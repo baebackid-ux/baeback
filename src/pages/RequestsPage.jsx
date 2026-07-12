@@ -1,6 +1,7 @@
 import { CheckCircle2, MessageCircle, Star, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AccountNav from '../components/AccountNav';
+import SEO from '../components/SEO';
 import StatusPill from '../components/StatusPill';
 import { useAuth } from '../contexts/AuthContext';
 import { fallbackRequests } from '../data/mockData';
@@ -70,6 +71,7 @@ export default function RequestsPage() {
 
   return (
     <main className="account-page requests-page">
+      <SEO title="Pengajuan" noindex />
       <div className="container"><AccountNav /></div>
       <div className="container page-heading split-heading">
        <div>
