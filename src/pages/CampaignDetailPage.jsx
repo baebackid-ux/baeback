@@ -6,7 +6,7 @@ import SEO from '../components/SEO';
 import StatusPill from '../components/StatusPill';
 import { useAuth } from '../contexts/AuthContext';
 import { fallbackCampaigns } from '../data/mockData';
-import { checkApiHealth, fetchCampaign, submitDonation } from '../lib/api';
+import { fetchCampaign, submitDonation } from '../lib/api';
 import { formatCurrency, formatDate, getCampaignProgress, summarizeText } from '../lib/formatters';
 import { buildCampaignJsonLd } from '../lib/seo';
 import { isSupabaseConfigured } from '../lib/supabase';
@@ -25,15 +25,10 @@ export default function CampaignDetailPage() {
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [apiReady, setApiReady] = useState(false);
   const idempotencyKeyRef = useRef(null);
 
   useEffect(() => {
     async function load() {
-      const ready = await checkApiHealth();
-      setApiReady(ready);
-      if (!ready) return;
-
       try {
         const result = await fetchCampaign(slug);
         if (result.data) setCampaign(result.data);

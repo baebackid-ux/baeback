@@ -7,7 +7,7 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 export default [
   { ignores: ['dist', 'api.js'] },
   {
-    files: ['server/**/*.js', 'api/**/*.js', 'vitest.config.js'],
+    files: ['server/**/*.js', 'api/**/*.js', 'scripts/**/*.js', 'vitest.config.js'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.node,
