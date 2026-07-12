@@ -6,9 +6,10 @@ import SEO from '../components/SEO';
 import { CardGridSkeleton } from '../components/Skeleton';
 import { fallbackCampaigns } from '../data/mockData';
 import { fetchCampaigns, checkApiHealth } from '../lib/api';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 export default function CampaignsPage() {
-  const [campaigns, setCampaigns] = useState(fallbackCampaigns);
+  const [campaigns, setCampaigns] = useState(isSupabaseConfigured ? [] : fallbackCampaigns);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1 });
 
@@ -24,10 +25,14 @@ export default function CampaignsPage() {
 
       try {
         const result = await fetchCampaigns(1, 12);
-        if (result.data?.length) setCampaigns(result.data);
+        setCampaigns(result.data ?? []);
         setPagination(result.pagination || { page: 1, totalPages: 1 });
       } catch {
-        setCampaigns(fallbackCampaigns.filter((c) => c.status === 'active'));
+        if (!isSupabaseConfigured) {
+          setCampaigns(fallbackCampaigns.filter((c) => c.status === 'active'));
+        } else {
+          setCampaigns([]);
+        }
       } finally {
         setLoading(false);
       }
