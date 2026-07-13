@@ -21,7 +21,7 @@ import SEO from '../components/SEO';
 import StepTimeline from '../components/StepTimeline';
 import { fallbackImpact, fallbackItems, fallbackNeeds } from '../data/mockData';
 import { categories } from '../lib/constants';
-import { buildOrganizationJsonLd, buildWebSiteJsonLd, DEFAULT_DESCRIPTION } from '../lib/seo';
+import { buildFaqJsonLd, buildOrganizationJsonLd, buildWebSiteJsonLd, DEFAULT_DESCRIPTION } from '../lib/seo';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { getOptimizedImageUrl } from '../lib/formatters';
 
@@ -53,7 +53,7 @@ export default function HomePage() {
       <SEO
         description={DEFAULT_DESCRIPTION}
         path="/"
-        jsonLd={[buildOrganizationJsonLd(), buildWebSiteJsonLd()]}
+        jsonLd={[buildOrganizationJsonLd(), buildWebSiteJsonLd(), buildFaqJsonLd()]}
       />
       <section className="hero hero-full">
         <div className="container hero-grid hero-full-grid">

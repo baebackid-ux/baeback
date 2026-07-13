@@ -9,6 +9,7 @@ const navItems = [
   { to: '/barang', label: 'Jelajahi Barang' },
   { to: '/campaign', label: 'Campaign' },
   { to: '/need-board', label: 'Need Board' },
+  { to: '/blog', label: 'Blog' },
 ];
 
 export default function Navbar() {

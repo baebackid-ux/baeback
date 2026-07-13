@@ -1,4 +1,4 @@
-import { ArrowLeft, Check, HeartHandshake, ShieldCheck, Target } from 'lucide-react';
+import { ArrowLeft, Check, HeartHandshake, MessageCircle, ShieldCheck, Target } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Badge from '../components/Badge';
@@ -126,6 +126,10 @@ export default function CampaignDetailPage() {
     }
   }
 
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : `https://baeback.pages.dev/campaign/${campaign.slug}`;
+  const shareText = `Yuk dukung campaign kebaikan di BaeBack: *${campaign.title}*. Siapa tahu kamu atau kenalanmu bisa membantu! Cek selengkapnya di: ${shareUrl}`;
+  const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+
   return (
     <main className="detail-page">
       <SEO
@@ -213,6 +217,28 @@ export default function CampaignDetailPage() {
             </button>
           </form>
           {!isActive && <small>Campaign ini sudah tidak menerima donasi.</small>}
+          <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #eee', width: '100%', textAlign: 'center' }}>
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-secondary"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#25D366',
+                borderColor: '#25D366',
+                width: '100%',
+                textDecoration: 'none',
+                fontWeight: '500'
+              }}
+              title="Bagikan ke WhatsApp"
+            >
+              <MessageCircle size={18} /> Bagikan Campaign
+            </a>
+          </div>
         </aside>
       </div>
     </main>

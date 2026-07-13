@@ -113,6 +113,10 @@ export default function ItemDetailPage() {
   const related = fallbackItems.filter((entry) => entry.id !== item.id && entry.category === item.category).concat(fallbackItems.filter((entry) => entry.id !== item.id)).slice(0, 3);
   const requiresAuth = !user;
 
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : `https://baeback.pages.dev/barang/${item.id}`;
+  const shareText = `Yuk lihat barang donasi layak pakai gratis di BaeBack: *${item.title}*. Siapa tahu kamu atau kenalanmu membutuhkannya! Cek selengkapnya di: ${shareUrl}`;
+  const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+
   return (
     <main className="detail-page">
       <SEO
@@ -126,7 +130,7 @@ export default function ItemDetailPage() {
       <div className="container detail-breadcrumb"><Link to="/barang"><ArrowLeft size={16} /> Kembali ke katalog</Link><span>/</span><span>{item.category}</span></div>
       <section className="container detail-grid">
         <div className="detail-media">
-          {item.image_url ? <img src={getOptimizedImageUrl(item.image_url, 800)} alt={item.title} decoding="async" /> : <div className="image-placeholder">Barang</div>}
+          {item.image_url ? <img src={getOptimizedImageUrl(item.image_url, 800)} alt={`Donasi ${item.title} Layak Pakai Gratis - BaeBack`} decoding="async" /> : <div className="image-placeholder">Barang</div>}
           <div className="detail-media-caption"><span>Foto dari pemberi</span><span>Pastikan kondisi sesuai saat pengambilan</span></div>
         </div>
         <aside className="detail-panel">
@@ -142,7 +146,13 @@ export default function ItemDetailPage() {
           <div className="donor-card"><span className="donor-avatar">{item.donor_name?.[0] || 'B'}</span><div><small>Dibagikan oleh</small><strong>{item.donor_name || 'Pemberi BaeBack'} <ShieldCheck size={15} /></strong><span>{item.post_type === 'official' ? 'Partner resmi BaeBack' : 'Anggota komunitas'}</span></div><Link to="/profil">Lihat profil</Link></div>
           {notice && <p className="success-note"><Check size={17} /> {notice}</p>}
           {requiresAuth && <p className="detail-reassurance">Masuk dulu untuk mengajukan, menyimpan, atau melaporkan barang.</p>}
-          <div className="detail-actions"><button className="btn btn-primary" onClick={() => { if (requireLogin()) setModalOpen(true); }}>{requiresAuth ? 'Masuk untuk ajukan' : 'Ajukan ambil barang'}</button><button className="btn btn-secondary" onClick={addFavorite}>{requiresAuth ? 'Masuk untuk simpan' : <><Heart size={17} /> Simpan</>}</button></div>
+          <div className="detail-actions">
+            <button className="btn btn-primary" onClick={() => { if (requireLogin()) setModalOpen(true); }}>{requiresAuth ? 'Masuk untuk ajukan' : 'Ajukan ambil barang'}</button>
+            <button className="btn btn-secondary" onClick={addFavorite}>{requiresAuth ? 'Masuk untuk simpan' : <><Heart size={17} /> Simpan</>}</button>
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#25D366', borderColor: '#25D366' }} title="Bagikan ke WhatsApp">
+              <MessageCircle size={17} /> Bagikan
+            </a>
+          </div>
           <div className="detail-secondary-actions"><Link to={requiresAuth ? '/login' : '/pengajuan'}><MessageCircle size={16} /> {requiresAuth ? 'Masuk untuk tanya pemberi' : 'Tanya pemberi'}</Link><button onClick={reportItem}>{requiresAuth ? 'Masuk untuk lapor' : <><Flag size={15} /> Laporkan</>}</button></div>
           <p className="detail-reassurance"><ShieldCheck size={17} /> Pengajuan tidak menjamin persetujuan. Pemberi akan memilih berdasarkan kebutuhan dan kecocokan pengambilan.</p>
         </aside>

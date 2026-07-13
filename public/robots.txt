@@ -3,6 +3,7 @@ Allow: /
 Allow: /barang
 Allow: /campaign
 Allow: /need-board
+Allow: /blog
 Disallow: /dashboard
 Disallow: /profil
 Disallow: /admin

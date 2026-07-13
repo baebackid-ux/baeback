@@ -18,6 +18,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
+import { blogPosts } from '../src/data/blog-posts.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -29,6 +30,7 @@ const PUBLIC_ROUTES = [
   '/barang',
   '/campaign',
   '/need-board',
+  '/blog',
   '/login',
   '/register',
 ];
@@ -112,6 +114,13 @@ async function prerender() {
     console.log('Supabase credentials not found. Dynamic detail routes will not be prerendered.');
   }
 
+  // Add static blog pages
+  for (const post of blogPosts) {
+    const route = `/blog/${post.slug}`;
+    routesToRender.push(route);
+    routeData[route] = { blogPost: post };
+  }
+
   console.log(`Starting prerendering for ${routesToRender.length} routes...\n`);
 
   for (const url of routesToRender) {
@@ -192,6 +201,7 @@ async function prerender() {
       { path: '/barang', priority: '0.9', changefreq: 'daily' },
       { path: '/campaign', priority: '0.9', changefreq: 'daily' },
       { path: '/need-board', priority: '0.9', changefreq: 'daily' },
+      { path: '/blog', priority: '0.8', changefreq: 'daily' },
     ];
 
     const sitemapEntries = staticPages.map(({ path, priority, changefreq }) =>
@@ -225,6 +235,17 @@ async function prerender() {
         urlEntry(
           `${SITE_URL}/need-board/${need.id}`,
           formatDate(need.updated_at || need.created_at),
+          'weekly',
+          '0.7',
+        )
+      );
+    }
+
+    for (const post of blogPosts) {
+      sitemapEntries.push(
+        urlEntry(
+          `${SITE_URL}/blog/${post.slug}`,
+          formatDate(post.date),
           'weekly',
           '0.7',
         )

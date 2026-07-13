@@ -56,8 +56,8 @@ export default function DonateItemPage() {
     const ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0, width, height);
 
-    const blob = await new Promise((res) => canvas.toBlob(res, 'image/jpeg', quality));
-    return blob ? new File([blob], (file.name || 'image').replace(/\.[^/.]+$/, '') + '.jpg', { type: 'image/jpeg' }) : null;
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/webp', quality));
+    return blob ? new File([blob], (file.name || 'image').replace(/\.[^/.]+$/, '') + '.webp', { type: 'image/webp' }) : null;
   }
 
   async function handleSubmit(event) {

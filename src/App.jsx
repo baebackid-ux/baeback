@@ -22,6 +22,8 @@ import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
 import NotFoundPage from './pages/NotFoundPage';
 import AccessDeniedPage from './pages/AccessDeniedPage';
+import BlogListPage from './pages/BlogListPage';
+import BlogPostPage from './pages/BlogPostPage';
 
 
 
@@ -43,6 +45,8 @@ export default function App() {
               <Route path="/campaign/:slug" element={<CampaignDetailPage />} />
               <Route path="/need-board" element={<NeedBoardPage />} />
               <Route path="/need-board/:id" element={<NeedDetailPage />} />
+              <Route path="/blog" element={<BlogListPage />} />
+              <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/login" element={<AuthPage mode="login" />} />
               <Route path="/register" element={<AuthPage mode="register" />} />
               <Route path="/unauthorized" element={<AccessDeniedPage />} />
