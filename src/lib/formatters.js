@@ -48,3 +48,12 @@ export function getCampaignProgress(collected, target) {
   if (!target) return 0;
   return Math.min(100, Math.round((collected / target) * 100));
 }
+
+export function getOptimizedImageUrl(url, width = 600) {
+  if (!url) return '';
+  // If it is a local asset, SVG, or data URL, do not proxy
+  if (url.startsWith('/') || url.startsWith('data:') || url.includes('.svg') || url.startsWith('blob:')) {
+    return url;
+  }
+  return `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=${width}&output=webp`;
+}

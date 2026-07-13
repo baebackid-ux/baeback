@@ -1,6 +1,6 @@
 import { ArrowUpRight, HeartHandshake, Target } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { formatCurrency, getCampaignProgress, summarizeText } from '../lib/formatters';
+import { formatCurrency, getCampaignProgress, getOptimizedImageUrl, summarizeText } from '../lib/formatters';
 import Badge from './Badge';
 import StatusPill from './StatusPill';
 
@@ -12,7 +12,7 @@ export default function CampaignCard({ campaign }) {
     <article className="item-card campaign-card">
       <Link to={`/campaign/${campaign.slug}`} className="item-image-wrap">
         {campaign.image_url ? (
-          <img src={campaign.image_url} alt={campaign.title} className="item-image" />
+          <img src={getOptimizedImageUrl(campaign.image_url, 400)} alt={campaign.title} className="item-image" loading="lazy" decoding="async" />
         ) : (
           <div className="image-placeholder">
             <HeartHandshake size={34} />

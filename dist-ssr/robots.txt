@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Allow: /barang
+Allow: /campaign
+Allow: /need-board
+Disallow: /dashboard
+Disallow: /profil
+Disallow: /admin
+Disallow: /pengajuan
+Disallow: /daftar-minat
+Disallow: /donasi-saya
+Disallow: /donasikan
+Disallow: /login
+Disallow: /register
+Disallow: /unauthorized
+
+Sitemap: https://baeback.app/sitemap.xml

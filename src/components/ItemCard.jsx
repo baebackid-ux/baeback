@@ -1,6 +1,6 @@
 import { ArrowUpRight, Gift, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getItemStatusLabel, getPostTypeLabel, summarizeText } from '../lib/formatters';
+import { getItemStatusLabel, getPostTypeLabel, getOptimizedImageUrl, summarizeText } from '../lib/formatters';
 import Badge from './Badge';
 import StatusPill from './StatusPill';
 
@@ -11,7 +11,7 @@ export default function ItemCard({ item }) {
     <article className="item-card">
       <Link to={`/barang/${item.id}`} className="item-image-wrap">
         {item.image_url ? (
-          <img src={item.image_url} alt={item.title} className="item-image" loading="lazy" decoding="async" />
+          <img src={getOptimizedImageUrl(item.image_url, 400)} alt={item.title} className="item-image" loading="lazy" decoding="async" />
         ) : (
           <div className="image-placeholder">
             <Gift size={34} />

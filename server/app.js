@@ -9,6 +9,7 @@ import { requestLogger } from './middleware/requestLogger.js';
 import createCampaignRoutes from './routes/campaigns.js';
 import createDonationRoutes from './routes/donations.js';
 import createAdminCampaignRoutes from './routes/admin/campaigns.js';
+import { ssrBotMiddleware } from './middleware/ssrBot.js';
 
 const startTime = Date.now();
 
@@ -37,6 +38,7 @@ export function createApp(config) {
   app.use(cors({ origin: config.corsOrigins, credentials: true }));
   app.use(express.json({ limit: '16kb' }));
   app.use(requestLogger());
+  app.use(ssrBotMiddleware());
 
   const generalLimiter = rateLimit({
     windowMs: 60 * 1000,

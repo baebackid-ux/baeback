@@ -8,7 +8,7 @@ import SEO from '../components/SEO';
 import StatusPill from '../components/StatusPill';
 import { useAuth } from '../contexts/AuthContext';
 import { fallbackItems } from '../data/mockData';
-import { getItemStatusLabel, getPostTypeLabel, summarizeText } from '../lib/formatters';
+import { getItemStatusLabel, getPostTypeLabel, getOptimizedImageUrl, summarizeText } from '../lib/formatters';
 import { buildProductJsonLd } from '../lib/seo';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
@@ -126,7 +126,7 @@ export default function ItemDetailPage() {
       <div className="container detail-breadcrumb"><Link to="/barang"><ArrowLeft size={16} /> Kembali ke katalog</Link><span>/</span><span>{item.category}</span></div>
       <section className="container detail-grid">
         <div className="detail-media">
-          {item.image_url ? <img src={item.image_url} alt={item.title} /> : <div className="image-placeholder">Barang</div>}
+          {item.image_url ? <img src={getOptimizedImageUrl(item.image_url, 800)} alt={item.title} decoding="async" /> : <div className="image-placeholder">Barang</div>}
           <div className="detail-media-caption"><span>Foto dari pemberi</span><span>Pastikan kondisi sesuai saat pengambilan</span></div>
         </div>
         <aside className="detail-panel">

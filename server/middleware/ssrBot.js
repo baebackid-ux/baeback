@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { cacheGet, cacheSet } from '../lib/cache/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -45,6 +46,16 @@ export function ssrBotMiddleware() {
     const ok = await ready;
     if (!ok || !render) return next();
 
+    const cacheKey = `ssr_bot:${req.originalUrl}`;
+    try {
+      const cachedPage = await cacheGet(cacheKey);
+      if (cachedPage) {
+        return res.status(200).set({ 'Content-Type': 'text/html' }).send(cachedPage);
+      }
+    } catch (cacheErr) {
+      console.warn('SSR cache get failed:', cacheErr.message);
+    }
+
     try {
       const { html, head } = render(req.originalUrl);
 
@@ -56,6 +67,12 @@ export function ssrBotMiddleware() {
         '<div id="root"></div>',
         `<div id="root">${html}</div>`,
       );
+
+      try {
+        await cacheSet(cacheKey, page, 3600); // cache for 1 hour
+      } catch (cacheErr) {
+        console.warn('SSR cache set failed:', cacheErr.message);
+      }
 
       res.status(200).set({ 'Content-Type': 'text/html' }).send(page);
     } catch (err) {

@@ -7,7 +7,7 @@ import StatusPill from '../components/StatusPill';
 import { useAuth } from '../contexts/AuthContext';
 import { fallbackCampaigns } from '../data/mockData';
 import { fetchCampaign, submitDonation } from '../lib/api';
-import { formatCurrency, formatDate, getCampaignProgress, summarizeText } from '../lib/formatters';
+import { formatCurrency, formatDate, getCampaignProgress, getOptimizedImageUrl, summarizeText } from '../lib/formatters';
 import { buildCampaignJsonLd } from '../lib/seo';
 import { isSupabaseConfigured } from '../lib/supabase';
 
@@ -141,7 +141,7 @@ export default function CampaignDetailPage() {
       <div className="container need-detail-grid">
         <article className="need-detail-story">
           {campaign.image_url && (
-            <img src={campaign.image_url} alt={campaign.title} className="campaign-detail-image" />
+            <img src={getOptimizedImageUrl(campaign.image_url, 800)} alt={campaign.title} className="campaign-detail-image" decoding="async" />
           )}
           <div className="card-badges">
             <Badge tone="teal" icon="official">{campaign.category || 'Campaign'}</Badge>

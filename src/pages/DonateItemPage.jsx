@@ -172,6 +172,11 @@ export default function DonateItemPage() {
                 setImageFile(null);
                 return;
               }
+              if (file.size > 10 * 1024 * 1024) {
+                setImageFile(null);
+                setNotice('Gambar terlalu besar. Batas maksimal ukuran adalah 10MB.');
+                return;
+              }
               try {
                 const originalSize = Math.round(file.size / 1024);
                 const compressed = await compressImage(file, 1200, 0.75);
@@ -180,11 +185,21 @@ export default function DonateItemPage() {
                   setImageFile(compressed);
                   setNotice(`Gambar dikompresi: ${originalSize}KB → ${compressedSize}KB`);
                 } else {
-                  setImageFile(file);
+                  if (file.size > 2 * 1024 * 1024) {
+                    setImageFile(null);
+                    setNotice('Gagal mengompresi gambar dan file asli melebihi batas 2MB. Silakan pilih gambar lain.');
+                  } else {
+                    setImageFile(file);
+                  }
                 }
               } catch {
-                setImageFile(file);
-                setNotice('Gagal mengompresi gambar — menggunakan file asli.');
+                if (file.size > 2 * 1024 * 1024) {
+                  setImageFile(null);
+                  setNotice('Gagal mengompresi gambar dan file asli melebihi batas 2MB. Silakan pilih gambar lain.');
+                } else {
+                  setImageFile(file);
+                  setNotice('Gagal mengompresi gambar — menggunakan file asli.');
+                }
               }
             }}
           />

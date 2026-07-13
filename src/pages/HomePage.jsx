@@ -23,6 +23,7 @@ import { fallbackImpact, fallbackItems, fallbackNeeds } from '../data/mockData';
 import { categories } from '../lib/constants';
 import { buildOrganizationJsonLd, buildWebSiteJsonLd, DEFAULT_DESCRIPTION } from '../lib/seo';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { getOptimizedImageUrl } from '../lib/formatters';
 
 export default function HomePage() {
   const [items, setItems] = useState(isSupabaseConfigured ? [] : fallbackItems);
@@ -74,12 +75,12 @@ export default function HomePage() {
           <div className="hero-editorial" aria-label="Pilihan barang BaeBack">
             <div className="hero-editorial-note"><span>Hari ini di BaeBack</span><strong>8 barang baru siap menemukan rumah keduanya.</strong></div>
             <Link to={items[0]?.id ? `/barang/${items[0].id}` : '/donasikan'} className="hero-featured-card">
-              <img src={items[0]?.image_url || 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=900&q=80'} alt={items[0]?.title || 'Mari berbagi'} />
+              <img src={getOptimizedImageUrl(items[0]?.image_url || 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=900&q=80', 600)} alt={items[0]?.title || 'Mari berbagi'} decoding="async" />
               <span className="free-label">Untuk dibagikan</span>
               <div><small>{items[0]?.category || 'BaeBack'}</small><strong>{items[0]?.title || 'Bagikan barang pertama Anda'}</strong><span>{items[0]?.location || 'Indonesia'} · {items[0]?.condition || 'Layak Pakai'}</span></div>
             </Link>
             <Link to={items[1]?.id ? `/barang/${items[1].id}` : '/barang'} className="hero-side-card">
-              <img src={items[1]?.image_url || 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=900&q=80'} alt={items[1]?.title || 'Mulai menjelajah'} />
+              <img src={getOptimizedImageUrl(items[1]?.image_url || 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=900&q=80', 400)} alt={items[1]?.title || 'Mulai menjelajah'} decoding="async" />
               <div><small>Baru dibagikan</small><strong>{items[1]?.title || 'Bantu sesama di sekitar Anda'}</strong></div>
             </Link>
             <div className="hero-impact-seal"><HeartHandshake size={22} /><strong>1.240+</strong><span>barang kembali<br />bermanfaat</span></div>
