@@ -11,7 +11,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
 
@@ -32,9 +32,8 @@ const PUBLIC_ROUTES = [
 async function prerender() {
   const template = fs.readFileSync(path.join(DIST, 'index.html'), 'utf-8');
 
-  const { render } = await import(
-    path.join(DIST_SSR, 'entry-server.js')
-  );
+  const entryServerFile = path.join(DIST_SSR, 'entry-server.js');
+  const { render } = await import(pathToFileURL(entryServerFile).href);
 
   const routesToRender = [...PUBLIC_ROUTES];
   const routeData = {};
