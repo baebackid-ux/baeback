@@ -29,6 +29,30 @@ export default function HomePage() {
   const [items, setItems] = useState(isSupabaseConfigured ? [] : fallbackItems);
   const [needs, setNeeds] = useState(isSupabaseConfigured ? [] : fallbackNeeds);
   const [impact, setImpact] = useState(isSupabaseConfigured ? [] : fallbackImpact);
+  const [activeFaq, setActiveFaq] = useState(null);
+
+  const faqs = [
+    {
+      question: 'Apa itu BaeBack?',
+      answer: 'BaeBack adalah platform charity marketplace berbasis web yang memungkinkan masyarakat Indonesia untuk saling berbagi barang layak pakai secara gratis (Rp 0). Tidak diperbolehkan ada transaksi komersial di platform kami.'
+    },
+    {
+      question: 'Bagaimana cara donasi barang di BaeBack?',
+      answer: 'Anda cukup membuat akun, masuk ke dashboard, klik "Donasikan", unggah foto barang layak pakai, isi deskripsi, dan tentukan metode pengambilan (diambil langsung oleh penerima atau dikirim melalui kurir).'
+    },
+    {
+      question: 'Apakah barang di BaeBack benar-benar gratis?',
+      answer: 'Ya, semua barang yang terdaftar di BaeBack berharga Rp 0. Tidak ada biaya keanggotaan, potongan, atau biaya admin. Biaya kurir/pengiriman disepakati langsung secara transparan oleh pemberi dan penerima.'
+    },
+    {
+      question: 'Bagaimana cara mengajukan barang yang saya butuhkan?',
+      answer: 'Cari barang yang Anda butuhkan di katalog. Klik tombol "Ajukan ambil barang", isi alasan mengapa Anda membutuhkan barang tersebut beserta rencana waktu pengambilannya. Pemberi barang akan meninjau dan memilih pengaju yang paling sesuai.'
+    }
+  ];
+
+  const toggleFaq = (index) => {
+    setActiveFaq(activeFaq === index ? null : index);
+  };
 
   useEffect(() => {
     if (!isSupabaseConfigured) return;
@@ -142,6 +166,76 @@ export default function HomePage() {
           { title: 'Pilih dengan tenang', description: 'Pemberi meninjau dan memilih penerima yang paling sesuai.' },
           { title: 'Serahkan & lanjutkan cerita', description: 'Atur pengambilan, konfirmasi penerimaan, dan beri ulasan.' },
         ]} />
+      </section>
+
+      <section className="container section faq-section" style={{ margin: '80px auto' }}>
+        <div className="section-heading" style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <div>
+            <span className="eyebrow">Pertanyaan Umum</span>
+            <h2>Punya pertanyaan seputar BaeBack?</h2>
+            <p>Berikut adalah jawaban untuk beberapa pertanyaan yang paling sering diajukan.</p>
+          </div>
+        </div>
+        <div className="faq-list" style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {faqs.map((faq, index) => {
+            const isOpen = activeFaq === index;
+            return (
+              <div
+                key={index}
+                style={{
+                  border: '1px solid var(--border-color, #eee)',
+                  borderRadius: '12px',
+                  backgroundColor: isOpen ? 'var(--bg-light, #fafafa)' : '#fff',
+                  transition: 'all 0.2s ease',
+                  overflow: 'hidden'
+                }}
+              >
+                <button
+                  onClick={() => toggleFaq(index)}
+                  style={{
+                    width: '100%',
+                    padding: '20px 24px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    fontWeight: '600',
+                    fontSize: '1.05rem',
+                    color: 'var(--text-main, #111)',
+                    gap: '16px'
+                  }}
+                >
+                  <span>{faq.question}</span>
+                  <span style={{
+                    fontSize: '1.4rem',
+                    transform: isOpen ? 'rotate(45deg)' : 'none',
+                    transition: 'transform 0.2s ease',
+                    color: 'var(--color-primary, #0f766e)',
+                    lineHeight: '1'
+                  }}>
+                    +
+                  </span>
+                </button>
+                <div
+                  style={{
+                    maxHeight: isOpen ? '200px' : '0',
+                    opacity: isOpen ? '1' : '0',
+                    transition: 'all 0.3s ease',
+                    padding: isOpen ? '0 24px 20px 24px' : '0 24px',
+                    fontSize: '0.95rem',
+                    lineHeight: '1.6',
+                    color: 'var(--text-muted, #555)'
+                  }}
+                >
+                  <p style={{ margin: '0' }}>{faq.answer}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </section>
 
       <section className="container final-cta">
