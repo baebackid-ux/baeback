@@ -4,11 +4,6 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
-  console.log('=== CEK ENV SAAT BUILD ===');
-  console.log('Dari .env file (loadEnv):', Object.keys(env).filter(k => k.startsWith('VITE_')));
-  console.log('Dari process.env (Cloudflare):', Object.keys(process.env).filter(k => k.startsWith('VITE_')));
-  console.log('==========================');
-
   return {
     plugins: [react()],
     ssr: {
