@@ -19,19 +19,53 @@ export default function ItemDetailPage() {
   const [item, setItem] = useState(() => {
     const initial = typeof window === 'undefined' ? globalThis.__INITIAL_DATA__?.item : window.__INITIAL_DATA__?.item;
     if (initial && String(initial.id) === String(id)) return initial;
-    return fallbackItems.find((entry) => entry.id === id) || fallbackItems[0];
+    return fallbackItems.find((entry) => entry.id === id) || null;
   });
   const [modalOpen, setModalOpen] = useState(false);
   const [notice, setNotice] = useState('');
+  const [loading, setLoading] = useState(!item);
 
   useEffect(() => {
-    if (!isSupabaseConfigured) return;
+    if (!isSupabaseConfigured) {
+      setLoading(false);
+      return;
+    }
     async function loadItem() {
-      const { data } = await supabase.from('items').select('*').eq('id', id).single();
-      if (data) setItem(data);
+      try {
+        const { data } = await supabase.from('items').select('*').eq('id', id).single();
+        if (data) setItem(data);
+      } catch (err) {
+        console.error('Error loading item:', err);
+      } finally {
+        setLoading(false);
+      }
     }
     loadItem();
   }, [id]);
+
+  if (loading) {
+    return (
+      <div className="page-shell" aria-busy="true">
+        <div className="container" style={{ padding: '80px 0', textAlign: 'center' }}>
+          Memuat detail barang...
+        </div>
+      </div>
+    );
+  }
+
+  if (!item) {
+    return (
+      <main className="page-shell">
+        <div className="container" style={{ padding: '80px 0', textAlign: 'center' }}>
+          <h2>Barang tidak ditemukan</h2>
+          <p>Barang mungkin sudah disalurkan atau telah dihapus.</p>
+          <Link to="/barang" className="btn btn-primary" style={{ marginTop: '20px', display: 'inline-block' }}>
+            Kembali ke katalog
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   function requireLogin() {
     if (user) return true;

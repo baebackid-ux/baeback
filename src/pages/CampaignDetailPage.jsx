@@ -18,13 +18,14 @@ export default function CampaignDetailPage() {
   const [campaign, setCampaign] = useState(() => {
     const initial = typeof window === 'undefined' ? globalThis.__INITIAL_DATA__?.campaign : window.__INITIAL_DATA__?.campaign;
     if (initial && String(initial.slug) === String(slug)) return initial;
-    return fallbackCampaigns.find((c) => c.slug === slug) || fallbackCampaigns[0];
+    return fallbackCampaigns.find((c) => c.slug === slug) || null;
   });
   const [amount, setAmount] = useState('');
   const [message, setMessage] = useState('');
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(!campaign);
   const idempotencyKeyRef = useRef(null);
 
   useEffect(() => {
@@ -35,10 +36,36 @@ export default function CampaignDetailPage() {
       } catch {
         const fallback = fallbackCampaigns.find((c) => c.slug === slug);
         if (fallback) setCampaign(fallback);
+      } finally {
+        setLoading(false);
       }
     }
     load();
   }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="page-shell" aria-busy="true">
+        <div className="container" style={{ padding: '80px 0', textAlign: 'center' }}>
+          Memuat detail campaign...
+        </div>
+      </div>
+    );
+  }
+
+  if (!campaign) {
+    return (
+      <main className="page-shell">
+        <div className="container" style={{ padding: '80px 0', textAlign: 'center' }}>
+          <h2>Campaign tidak ditemukan</h2>
+          <p>Campaign mungkin telah selesai atau ditutup.</p>
+          <Link to="/campaign" className="btn btn-primary" style={{ marginTop: '20px', display: 'inline-block' }}>
+            Kembali ke daftar campaign
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   const progress = getCampaignProgress(campaign.collected_amount, campaign.target_amount);
   const isActive = campaign.status === 'active';
