@@ -1,4 +1,3 @@
-import { lazy, Suspense } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import AdminRoute from './components/AdminRoute';
 import Footer from './components/Footer';
@@ -6,27 +5,25 @@ import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import { LenisProvider } from './contexts/LenisContext';
 
-const HomePage = lazy(() => import('./pages/HomePage'));
-const ItemsPage = lazy(() => import('./pages/ItemsPage'));
-const ItemDetailPage = lazy(() => import('./pages/ItemDetailPage'));
-const CampaignsPage = lazy(() => import('./pages/CampaignsPage'));
-const CampaignDetailPage = lazy(() => import('./pages/CampaignDetailPage'));
-const NeedBoardPage = lazy(() => import('./pages/NeedBoardPage'));
-const NeedDetailPage = lazy(() => import('./pages/NeedDetailPage'));
-const AuthPage = lazy(() => import('./pages/AuthPage'));
-const DonateItemPage = lazy(() => import('./pages/DonateItemPage'));
-const DashboardPage = lazy(() => import('./pages/DashboardPage'));
-const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
-const RequestsPage = lazy(() => import('./pages/RequestsPage'));
-const MyDonationsPage = lazy(() => import('./pages/MyDonationsPage'));
-const ProfilePage = lazy(() => import('./pages/ProfilePage'));
-const AdminPage = lazy(() => import('./pages/AdminPage'));
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
-const AccessDeniedPage = lazy(() => import('./pages/AccessDeniedPage'));
+import HomePage from './pages/HomePage';
+import ItemsPage from './pages/ItemsPage';
+import ItemDetailPage from './pages/ItemDetailPage';
+import CampaignsPage from './pages/CampaignsPage';
+import CampaignDetailPage from './pages/CampaignDetailPage';
+import NeedBoardPage from './pages/NeedBoardPage';
+import NeedDetailPage from './pages/NeedDetailPage';
+import AuthPage from './pages/AuthPage';
+import DonateItemPage from './pages/DonateItemPage';
+import DashboardPage from './pages/DashboardPage';
+import FavoritesPage from './pages/FavoritesPage';
+import RequestsPage from './pages/RequestsPage';
+import MyDonationsPage from './pages/MyDonationsPage';
+import ProfilePage from './pages/ProfilePage';
+import AdminPage from './pages/AdminPage';
+import NotFoundPage from './pages/NotFoundPage';
+import AccessDeniedPage from './pages/AccessDeniedPage';
 
-function PageFallback() {
-  return <div className="page-shell" aria-busy="true" />;
-}
+
 
 export default function App() {
   const location = useLocation();
@@ -38,7 +35,6 @@ export default function App() {
       <Navbar />
       <div id="main-content">
         <div className="page-transition" key={location.pathname}>
-          <Suspense fallback={<PageFallback />}>
             <Routes location={location}>
               <Route path="/" element={<HomePage />} />
               <Route path="/barang" element={<ItemsPage />} />
@@ -108,7 +104,6 @@ export default function App() {
               />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
-          </Suspense>
         </div>
       </div>
       <Footer />
