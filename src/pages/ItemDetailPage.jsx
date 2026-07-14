@@ -9,7 +9,7 @@ import StatusPill from '../components/StatusPill';
 import { useAuth } from '../contexts/AuthContext';
 import { fallbackItems } from '../data/mockData';
 import { getItemStatusLabel, getPostTypeLabel, getOptimizedImageUrl, summarizeText } from '../lib/formatters';
-import { buildProductJsonLd } from '../lib/seo';
+import { buildProductJsonLd, SITE_URL } from '../lib/seo';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export default function ItemDetailPage() {
@@ -113,7 +113,7 @@ export default function ItemDetailPage() {
   const related = fallbackItems.filter((entry) => entry.id !== item.id && entry.category === item.category).concat(fallbackItems.filter((entry) => entry.id !== item.id)).slice(0, 3);
   const requiresAuth = !user;
 
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : `https://baeback.pages.dev/barang/${item.id}`;
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : `${SITE_URL}/barang/${item.id}`;
   const shareText = `Yuk lihat barang donasi layak pakai gratis di BaeBack: *${item.title}*. Siapa tahu kamu atau kenalanmu membutuhkannya! Cek selengkapnya di: ${shareUrl}`;
   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
 

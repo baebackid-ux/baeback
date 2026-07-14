@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-const SITE_URL = process.env.VITE_SITE_URL || 'https://baeback.app';
+const SITE_URL = process.env.VITE_SITE_URL || 'https://baeback.pages.dev';
 
 function escapeXml(value) {
   return String(value)
@@ -41,60 +41,64 @@ export default async function handler(_req, res) {
   );
 
   if (supabaseUrl && supabaseKey) {
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    try {
+      const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const [{ data: items }, { data: campaigns }, { data: needs }] = await Promise.all([
-      supabase
-        .from('items')
-        .select('id, updated_at, created_at')
-        .in('status', ['available', 'reserved'])
-        .order('created_at', { ascending: false })
-        .limit(500),
-      supabase
-        .from('campaigns')
-        .select('slug, updated_at, created_at')
-        .eq('status', 'active')
-        .order('created_at', { ascending: false })
-        .limit(100),
-      supabase
-        .from('need_posts')
-        .select('id, updated_at, created_at')
-        .in('status', ['open', 'offered'])
-        .order('created_at', { ascending: false })
-        .limit(200),
-    ]);
+      const [{ data: items }, { data: campaigns }, { data: needs }] = await Promise.all([
+        supabase
+          .from('items')
+          .select('id, updated_at, created_at')
+          .in('status', ['available', 'reserved'])
+          .order('created_at', { ascending: false })
+          .limit(500),
+        supabase
+          .from('campaigns')
+          .select('slug, updated_at, created_at')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(100),
+        supabase
+          .from('need_posts')
+          .select('id, updated_at, created_at')
+          .in('status', ['open', 'offered'])
+          .order('created_at', { ascending: false })
+          .limit(200),
+      ]);
 
-    for (const item of items || []) {
-      entries.push(
-        urlEntry(
-          `${SITE_URL}/barang/${item.id}`,
-          formatDate(item.updated_at || item.created_at),
-          'weekly',
-          '0.8',
-        ),
-      );
-    }
+      for (const item of items || []) {
+        entries.push(
+          urlEntry(
+            `${SITE_URL}/barang/${item.id}`,
+            formatDate(item.updated_at || item.created_at),
+            'weekly',
+            '0.8',
+          ),
+        );
+      }
 
-    for (const campaign of campaigns || []) {
-      entries.push(
-        urlEntry(
-          `${SITE_URL}/campaign/${campaign.slug}`,
-          formatDate(campaign.updated_at || campaign.created_at),
-          'daily',
-          '0.8',
-        ),
-      );
-    }
+      for (const campaign of campaigns || []) {
+        entries.push(
+          urlEntry(
+            `${SITE_URL}/campaign/${campaign.slug}`,
+            formatDate(campaign.updated_at || campaign.created_at),
+            'daily',
+            '0.8',
+          ),
+        );
+      }
 
-    for (const need of needs || []) {
-      entries.push(
-        urlEntry(
-          `${SITE_URL}/need-board/${need.id}`,
-          formatDate(need.updated_at || need.created_at),
-          'weekly',
-          '0.7',
-        ),
-      );
+      for (const need of needs || []) {
+        entries.push(
+          urlEntry(
+            `${SITE_URL}/need-board/${need.id}`,
+            formatDate(need.updated_at || need.created_at),
+            'weekly',
+            '0.7',
+          ),
+        );
+      }
+    } catch (dbError) {
+      console.error('Failed to fetch dynamic routes for sitemap from Supabase:', dbError);
     }
   }
 

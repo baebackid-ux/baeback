@@ -1,5 +1,5 @@
 export const SITE_NAME = 'BaeBack';
-export const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://baeback.app';
+export const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://baeback.pages.dev';
 export const DEFAULT_DESCRIPTION =
   'BaeBack adalah marketplace charity untuk berbagi barang layak pakai secara gratis, mengajukan kebutuhan, dan mendukung campaign kebaikan.';
 export const DEFAULT_OG_IMAGE = '/og-default.svg';

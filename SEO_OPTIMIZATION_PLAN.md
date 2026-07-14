@@ -6,8 +6,8 @@ Dokumen ini berisi panduan dan rencana aksi untuk memaksimalkan performa SEO pro
 
 ## 1. Integrasi Google Search Console & Bing Webmaster
 Untuk memastikan mesin pencari mengetahui keberadaan website dan mengindeks seluruh halamannya secara cepat.
-*   **Pendaftaran Domain**: Daftarkan domain utama (misal: `https://baeback.app`) di [Google Search Console](https://search.google.com/search-console) dan [Bing Webmaster Tools](https://www.bing.com/webmasters).
-*   **Kirimkan Sitemap**: Masukkan URL sitemap dinamis proyek (`https://baeback.app/sitemap.xml`) di menu *Sitemaps*. Ini membantu crawler menemukan postingan barang dan campaign baru secara otomatis.
+*   **Pendaftaran Domain**: Daftarkan domain utama (misal: `https://baeback.pages.dev`) di [Google Search Console](https://search.google.com/search-console) dan [Bing Webmaster Tools](https://www.bing.com/webmasters).
+*   **Kirimkan Sitemap**: Masukkan URL sitemap dinamis proyek (`https://baeback.pages.dev/sitemap.xml`) di menu *Sitemaps*. Ini membantu crawler menemukan postingan barang dan campaign baru secara otomatis.
 *   **Pemantauan *Index Coverage***: Cek secara berkala apakah ada halaman yang gagal diindeks karena kesalahan redirect, 404, atau masalah perayapan seluler (*mobile-friendliness*).
 
 ---
@@ -20,7 +20,7 @@ Google memprioritaskan performa situs berdasarkan data dari pengguna asli (Chrom
 ---
 
 ## 3. Konfigurasi DNS & SSL Tingkat Lanjut
-*   **Redireksi Domain Tunggal**: Pastikan hanya ada satu alamat canonical yang dapat diakses (misal: redirect otomatis dari `www.baeback.app` ke `baeback.app`, atau sebaliknya). Hal ini mencegah penalti "konten duplikat" (*duplicate content*) dari Google.
+*   **Redireksi Domain Tunggal**: Pastikan hanya ada satu alamat canonical yang dapat diakses (misal: redirect otomatis dari `www.baeback.pages.dev` ke `baeback.pages.dev`, atau sebaliknya). Hal ini mencegah penalti "konten duplikat" (*duplicate content*) dari Google.
 *   **HTTP/2 atau HTTP/3**: Gunakan penyedia hosting (seperti Vercel atau Netlify) yang secara otomatis menyajikan aset menggunakan protokol HTTP/2 atau HTTP/3 untuk pemuatan file CSS/JS paralel yang lebih cepat.
 
 ---
@@ -28,5 +28,5 @@ Google memprioritaskan performa situs berdasarkan data dari pengguna asli (Chrom
 ## 4. Strategi Konten & Backlink (Off-Page SEO)
 SEO tidak hanya tentang teknis web, tetapi juga tentang reputasi dan otoritas domain.
 *   **Kampanye Media Sosial**: Bagikan campaign kebaikan dari BaeBack ke platform sosial. Tag Open Graph (OG) yang kita pasang di kode akan menampilkan kartu preview gambar dan deskripsi yang rapi untuk memikat klik.
-*   **Kerja Sama Publikasi (Backlink)**: Jalin kerja sama dengan yayasan charity, media lokal, atau blog komunitas untuk menulis tentang BaeBack. Backlink dari situs otoritas tinggi ke `baeback.app` sangat memengaruhi posisi peringkat di Google.
+*   **Kerja Sama Publikasi (Backlink)**: Jalin kerja sama dengan yayasan charity, media lokal, atau blog komunitas untuk menulis tentang BaeBack. Backlink dari situs otoritas tinggi ke `baeback.pages.dev` sangat memengaruhi posisi peringkat di Google.
 *   **Riset Kata Kunci**: Selalu arahkan teks di halaman statis (seperti deskripsi di Tentang Kami atau Panduan) untuk menyasar kata kunci bervolume tinggi namun kompetisi rendah, seperti *"donasi barang layak pakai gratis"*, *"charity marketplace Indonesia"*, atau *"berbagi baju bekas layak pakai"*.

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { blogPosts } from '../data/blog-posts';
 import { getOptimizedImageUrl, formatDate } from '../lib/formatters';
+import { SITE_URL } from '../lib/seo';
 
 export default function BlogPostPage() {
   const { slug } = useParams();
@@ -36,11 +37,11 @@ export default function BlogPostPage() {
     'author': {
       '@type': 'Organization',
       'name': 'BaeBack',
-      'url': 'https://baeback.pages.dev'
+      'url': SITE_URL
     }
   };
 
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : `https://baeback.pages.dev/blog/${post.slug}`;
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : `${SITE_URL}/blog/${post.slug}`;
   const shareText = `Yuk baca artikel menarik di BaeBack: *${post.title}*. Selengkapnya di: ${shareUrl}`;
   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
 

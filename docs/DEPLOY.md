@@ -6,7 +6,7 @@
 |-------------|----------|-----|----------|
 | development | localhost:5173 | localhost:3001 | Supabase dev project |
 | staging | staging.baeback.app | Railway staging | Supabase staging |
-| production | baeback.app | Railway prod | Supabase prod |
+| production | baeback.pages.dev | Railway prod | Supabase prod |
 
 ## Workflow
 

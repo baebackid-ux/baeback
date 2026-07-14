@@ -3,6 +3,7 @@ import { BookOpen } from 'lucide-react';
 import BlogCard from '../components/BlogCard';
 import SEO from '../components/SEO';
 import { blogPosts } from '../data/blog-posts';
+import { SITE_URL } from '../lib/seo';
 
 const blogCategories = ['Semua', 'Tentang Kami', 'Panduan', 'Edukasi'];
 
@@ -18,7 +19,7 @@ export default function BlogListPage() {
     '@type': 'CollectionPage',
     'name': 'Blog & Inspirasi Kebaikan — BaeBack',
     'description': 'Temukan artikel, cerita, dan panduan lengkap seputar berbagi kebaikan bersama BaeBack.',
-    'url': 'https://baeback.pages.dev/blog'
+    'url': `${SITE_URL}/blog`
   };
 
   return (

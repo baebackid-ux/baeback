@@ -8,7 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { fallbackCampaigns } from '../data/mockData';
 import { fetchCampaign, submitDonation } from '../lib/api';
 import { formatCurrency, formatDate, getCampaignProgress, getOptimizedImageUrl, summarizeText } from '../lib/formatters';
-import { buildCampaignJsonLd } from '../lib/seo';
+import { buildCampaignJsonLd, SITE_URL } from '../lib/seo';
 import { isSupabaseConfigured } from '../lib/supabase';
 
 export default function CampaignDetailPage() {
@@ -126,7 +126,7 @@ export default function CampaignDetailPage() {
     }
   }
 
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : `https://baeback.pages.dev/campaign/${campaign.slug}`;
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : `${SITE_URL}/campaign/${campaign.slug}`;
   const shareText = `Yuk dukung campaign kebaikan di BaeBack: *${campaign.title}*. Siapa tahu kamu atau kenalanmu bisa membantu! Cek selengkapnya di: ${shareUrl}`;
   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
 

@@ -15,4 +15,4 @@ Disallow: /login
 Disallow: /register
 Disallow: /unauthorized
 
-Sitemap: https://baeback.app/sitemap.xml
+Sitemap: https://baeback.pages.dev/sitemap.xml
