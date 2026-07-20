@@ -63,13 +63,13 @@ export default function NeedBoardPage() {
   return (
     <main className="need-board-page">
       <SEO
-        title="Need Board"
-        description="Temukan kebutuhan nyata komunitas di Need Board BaeBack. Tawarkan barang yang cocok dan bantu orang yang membutuhkan."
+        title="Kebutuhan Donasi Barang Semarang — Need Board"
+        description="Temukan permintaan donasi barang bekas dan bantuan sosial dari warga di Semarang. Bantu salurkan barang layak pakai gratis untuk yang membutuhkan."
         path="/need-board"
       />
       <header className="need-board-hero">
         <div className="container need-board-hero-grid">
-          <div><span className="eyebrow">Ruang kebutuhan komunitas</span><h1>Mungkin sederhana bagimu.<br /><em>Bisa berarti besar bagi mereka.</em></h1><p>Temukan kebutuhan nyata di sekitar kita, lalu tawarkan barang yang bisa kembali bermanfaat.</p></div>
+          <div><span className="eyebrow">Ruang kebutuhan komunitas</span><h1>Mungkin sederhana bagimu.<br /><em>Bisa berarti besar bagi mereka.</em></h1><p>Temukan permintaan donasi barang bekas di Semarang, lalu salurkan barang layak pakai yang Anda miliki.</p></div>
           <div className="need-board-manifest"><HandHeart size={28} /><strong>Berbagi dengan martabat.</strong><p>Setiap kebutuhan ditampilkan dengan bahasa yang setara, jelas, dan tanpa eksploitasi cerita pribadi.</p></div>
         </div>
       </header>

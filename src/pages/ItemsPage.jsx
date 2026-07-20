@@ -122,20 +122,20 @@ export default function ItemsPage() {
 
   const filteredItems = items;
   const seoDescription = filters.category
-    ? `Jelajahi barang gratis kategori ${filters.category} di BaeBack. Temukan barang layak pakai tanpa biaya.`
-    : 'Jelajahi katalog barang layak pakai gratis dari komunitas BaeBack. Temukan barang berdasarkan kebutuhan, bukan harga.';
+    ? `Jelajahi donasi barang bekas kategori ${filters.category} di Semarang melalui BaeBack. Temukan barang layak pakai secara gratis tanpa biaya.`
+    : 'Cari barang gratis & donasi barang bekas layak pakai di Semarang. Solusi alternatif dibanding beli barang murah di Semarang, langsung dari donatur terverifikasi.';
 
   return (
     <main className="page-shell catalog-page">
       <SEO
-        title="Jelajahi Barang Gratis"
+        title="Jelajahi Barang Gratis & Donasi Barang Semarang"
         description={seoDescription}
         path="/barang"
       />
       <header className="container page-heading catalog-heading">
         <span className="eyebrow">Katalog komunitas</span>
         <h1>Barang baik, siap<br /><em>dipakai kembali.</em></h1>
-        <p>Temukan barang berdasarkan kebutuhan, bukan harga. Semuanya dibagikan tanpa biaya.</p>
+        <p>Temukan barang bekas layak pakai gratis di Semarang. Semuanya disalurkan tanpa biaya.</p>
       </header>
       <div className="container">
       <SearchFilters filters={filters} onChange={setFilters} />

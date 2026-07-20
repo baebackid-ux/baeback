@@ -84,6 +84,7 @@ export default function HomePage() {
   return (
     <main>
       <SEO
+        title="Donasi Barang & Barang Gratis Semarang"
         description={DEFAULT_DESCRIPTION}
         path="/"
         jsonLd={[buildOrganizationJsonLd(), buildWebSiteJsonLd(), buildFaqJsonLd()]}
@@ -92,8 +93,8 @@ export default function HomePage() {
         <div className="container hero-grid hero-full-grid">
           <div className="hero-copy">
             <span className="hero-kicker"><Sparkles size={14} /> Komunitas berbagi barang</span>
-            <h1>Berbagi barang baik, dengan cara yang terasa ringan.</h1>
-            <p>BaeBack mempertemukan barang layak pakai dengan orang yang benar-benar membutuhkannya—hangat, aman, dan tanpa biaya.</p>
+            <h1>Donasi Barang Bekas & Berbagi Barang Gratis di Semarang</h1>
+            <p>BaeBack mempertemukan donasi baju bekas dan barang layak pakai dari orang-orang baik dengan mereka yang membutuhkan di Semarang—100% gratis tanpa biaya.</p>
             <div className="hero-actions">
               <Link className="btn btn-primary" to="/barang">Jelajahi barang <ArrowRight size={17} /></Link>
               <Link className="btn btn-quiet" to="/donasikan">Saya ingin berbagi</Link>

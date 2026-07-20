@@ -1,7 +1,7 @@
 export const SITE_NAME = 'BaeBack';
 export const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://baeback.pages.dev';
 export const DEFAULT_DESCRIPTION =
-  'BaeBack adalah charity marketplace untuk berbagi baju bekas dan barang layak pakai secara gratis (Rp 0) di area Semarang, Jawa Tengah dan sekitarnya.';
+  'BaeBack adalah charity marketplace untuk donasi barang bekas layak pakai dan berbagi barang gratis di area Semarang, Jawa Tengah. Temukan donatur atau penerima dengan aman!';
 export const DEFAULT_OG_IMAGE = '/og-default.svg';
 
 export function buildOrganizationJsonLd() {
