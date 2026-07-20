@@ -7,29 +7,50 @@ import { useAuth } from '../contexts/AuthContext';
 export default function AuthPage({ mode }) {
   const isRegister = mode === 'register';
   const [form, setForm] = useState({ fullName: '', email: '', password: '' });
-  const [notice, setNotice] = useState('');
+  const [successNotice, setSuccessNotice] = useState('');
+  const [errorNotice, setErrorNotice] = useState('');
   const location = useLocation();
   const { signIn, signUp, isAuthenticated, loading, profile } = useAuth();
   const navigate = useNavigate();
 
-  const returnTo = location.state?.from?.pathname || (profile?.role === 'admin' ? '/admin' : '/dashboard');
+  useEffect(() => {
+    setSuccessNotice('');
+    setErrorNotice('');
+  }, [mode]);
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      navigate(returnTo, { replace: true });
+      // Wait for profile to load to avoid role-based redirect race conditions
+      if (!profile) return;
+      const nextTarget = profile.role === 'admin'
+        ? '/admin'
+        : (location.state?.from?.pathname || '/dashboard');
+      navigate(nextTarget, { replace: true });
     }
-  }, [isAuthenticated, loading, navigate, returnTo]);
+  }, [isAuthenticated, loading, profile, navigate, location.state]);
 
   async function handleSubmit(event) {
     event.preventDefault();
-    const result = isRegister ? await signUp(form.email, form.password, form.fullName) : await signIn(form.email, form.password);
-    if (result.error) {
-      setNotice(result.error.message);
-      return;
-    }
+    setSuccessNotice('');
+    setErrorNotice('');
 
-    const nextTarget = location.state?.from?.pathname || '/dashboard';
-    navigate(nextTarget, { replace: true });
+    if (isRegister) {
+      const result = await signUp(form.email, form.password, form.fullName);
+      if (result.error) {
+        setErrorNotice(result.error.message);
+        return;
+      }
+
+      const session = result.data?.session;
+      if (!session) {
+        setSuccessNotice('Silakan cek kotak masuk email Anda untuk melakukan verifikasi');
+      }
+    } else {
+      const result = await signIn(form.email, form.password);
+      if (result.error) {
+        setErrorNotice(result.error.message);
+      }
+    }
   }
 
   return (
@@ -64,7 +85,8 @@ export default function AuthPage({ mode }) {
           <h2>{isRegister ? 'Buat akunmu' : 'Masuk ke akunmu'}</h2>
           <p>{isRegister ? 'Mulai satu cerita baik dari barang yang sudah tak terpakai.' : 'Lanjutkan aktivitas dan percakapan komunitasmu.'}</p>
 
-          {notice && <p className="success-note">{notice}</p>}
+          {successNotice && <p className="success-note">{successNotice}</p>}
+          {errorNotice && <p className="error-note">{errorNotice}</p>}
 
           <form className="form-stack" onSubmit={handleSubmit}>
             {isRegister && (
@@ -88,6 +110,15 @@ export default function AuthPage({ mode }) {
               {isRegister ? 'Buat akun' : 'Masuk sekarang'} <ArrowRight size={17} />
             </button>
           </form>
+
+          <div className="auth-switch">
+            <p>
+              {isRegister ? 'Sudah punya akun? ' : 'Belum punya akun? '}
+              <Link to={isRegister ? '/login' : '/register'}>
+                {isRegister ? 'Masuk di sini' : 'Daftar di sini'}
+              </Link>
+            </p>
+          </div>
         </div>
       </section>
     </main>

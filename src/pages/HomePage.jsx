@@ -19,6 +19,7 @@ import ImpactCounter from '../components/ImpactCounter';
 import ItemCard from '../components/ItemCard';
 import SEO from '../components/SEO';
 import StepTimeline from '../components/StepTimeline';
+import { CardGridSkeleton, ItemCardSkeleton, SkeletonBlock } from '../components/Skeleton';
 import { fallbackImpact, fallbackItems, fallbackNeeds } from '../data/mockData';
 import { categories } from '../lib/constants';
 import { buildFaqJsonLd, buildOrganizationJsonLd, buildWebSiteJsonLd, DEFAULT_DESCRIPTION } from '../lib/seo';
@@ -29,6 +30,7 @@ export default function HomePage() {
   const [items, setItems] = useState(isSupabaseConfigured ? [] : fallbackItems);
   const [needs, setNeeds] = useState(isSupabaseConfigured ? [] : fallbackNeeds);
   const [impact, setImpact] = useState(isSupabaseConfigured ? [] : fallbackImpact);
+  const [loading, setLoading] = useState(isSupabaseConfigured);
   const [activeFaq, setActiveFaq] = useState(null);
 
   const faqs = [
@@ -57,14 +59,21 @@ export default function HomePage() {
   useEffect(() => {
     if (!isSupabaseConfigured) return;
     async function loadHome() {
-      const [{ data: itemData }, { data: needData }, { data: impactData }] = await Promise.all([
-        supabase.from('items').select('*').in('status', ['available', 'reserved']).order('created_at', { ascending: false }).limit(8),
-        supabase.from('need_posts').select('*').in('status', ['open', 'offered']).order('created_at', { ascending: false }).limit(3),
-        supabase.from('impact_stats').select('label,value').order('sort_order'),
-      ]);
-      setItems(itemData ?? []);
-      setNeeds(needData ?? []);
-      setImpact(impactData ?? []);
+      setLoading(true);
+      try {
+        const [{ data: itemData }, { data: needData }, { data: impactData }] = await Promise.all([
+          supabase.from('items').select('*').in('status', ['available', 'reserved']).order('created_at', { ascending: false }).limit(8),
+          supabase.from('need_posts').select('*').in('status', ['open', 'offered']).order('created_at', { ascending: false }).limit(3),
+          supabase.from('impact_stats').select('label,value').order('sort_order'),
+        ]);
+        setItems(itemData ?? []);
+        setNeeds(needData ?? []);
+        setImpact(impactData ?? []);
+      } catch (err) {
+        console.error('Failed to load home page data:', err);
+      } finally {
+        setLoading(false);
+      }
     }
     loadHome();
   }, []);
@@ -135,27 +144,65 @@ export default function HomePage() {
             <div><span className="eyebrow">Baru dibagikan</span><h2>Siap untuk cerita berikutnya</h2><p>Barang layak pakai dari orang-orang baik di sekitar kita.</p></div>
             <Link className="text-link" to="/barang">Lihat katalog <ArrowRight size={16} /></Link>
           </div>
-          <div className="card-grid">{items.slice(0, 4).map((item) => <ItemCard key={item.id} item={item} />)}</div>
+          {loading ? (
+            <CardGridSkeleton count={4} />
+          ) : (
+            <div className="card-grid">{items.slice(0, 4).map((item) => <ItemCard key={item.id} item={item} />)}</div>
+          )}
         </div>
       </section>
 
       <section className="container section editorial-feature">
         <div className="editorial-feature-copy"><span className="eyebrow">Official charity</span><h2>Lebih terkurasi.<br /><em>Tetap sepenuh hati.</em></h2><p>Program resmi BaeBack bekerja sama dengan komunitas dan donatur terverifikasi untuk menyalurkan barang tepat sasaran.</p><Link className="btn btn-secondary" to="/barang">Lihat pilihan resmi <ArrowRight size={17} /></Link></div>
-        <div className="editorial-feature-cards">{(officialItems.length ? officialItems : items).slice(0, 2).map((item) => <ItemCard key={item.id} item={item} />)}</div>
+        <div className="editorial-feature-cards">
+          {loading ? (
+            <>
+              <ItemCardSkeleton index={0} />
+              <ItemCardSkeleton index={1} />
+            </>
+          ) : (
+            (officialItems.length ? officialItems : items).slice(0, 2).map((item) => <ItemCard key={item.id} item={item} />)
+          )}
+        </div>
       </section>
 
       <section className="need-home">
         <div className="container need-home-grid">
           <div className="need-home-intro"><span className="eyebrow">Need Board</span><h2>Kamu mungkin punya<br />yang mereka cari.</h2><p>Kebutuhan ditulis langsung oleh komunitas agar bantuan kecil dapat sampai dengan lebih tepat.</p><Link className="btn btn-primary" to="/need-board">Buka Need Board <ArrowRight size={17} /></Link></div>
           <div className="need-home-list">
-            {needs.map((need, index) => <Link to={`/need-board/${need.id}`} key={need.id} className="need-home-row"><span className="need-index">0{index + 1}</span><div><small>{need.category} · {need.location}</small><strong>{need.title}</strong></div><span className="need-row-status">{need.status === 'open' ? 'Masih dibutuhkan' : 'Ada tawaran'}</span><ArrowRight size={18} /></Link>)}
+            {loading ? (
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="need-home-row skeleton-card" style={{ '--skeleton-index': index, border: 'none', background: 'transparent' }} aria-hidden="true">
+                  <span className="need-index">0{index + 1}</span>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <SkeletonBlock className="skeleton-line skeleton-line--tiny" />
+                    <SkeletonBlock className="skeleton-title" style={{ margin: 0, height: '16px', width: '80%' }} />
+                  </div>
+                  <SkeletonBlock className="skeleton-pill" />
+                </div>
+              ))
+            ) : (
+              needs.map((need, index) => <Link to={`/need-board/${need.id}`} key={need.id} className="need-home-row"><span className="need-index">0{index + 1}</span><div><small>{need.category} · {need.location}</small><strong>{need.title}</strong></div><span className="need-row-status">{need.status === 'open' ? 'Masih dibutuhkan' : 'Ada tawaran'}</span><ArrowRight size={18} /></Link>)
+            )}
           </div>
         </div>
       </section>
 
       <section className="container section impact-section">
         <div className="impact-intro"><span className="eyebrow">Dampak bersama</span><h2>Satu barang bisa mengubah<br />lebih dari satu hari.</h2><p>Setiap angka adalah barang yang tak jadi terbuang dan seseorang yang mendapat manfaat baru.</p></div>
-        <ImpactCounter stats={impact} />
+        {loading ? (
+          <div className="impact-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px' }}>
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="impact-card skeleton-card" style={{ '--skeleton-index': index }} aria-hidden="true">
+                <SkeletonBlock className="skeleton-icon skeleton-icon--stat" as="div" style={{ margin: '0 auto 12px' }} />
+                <SkeletonBlock className="skeleton-stat-value" as="div" style={{ margin: '0 auto 8px', width: '64px', height: '32px' }} />
+                <SkeletonBlock className="skeleton-line" as="div" style={{ margin: '0 auto', width: '96px', height: '14px' }} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <ImpactCounter stats={impact} />
+        )}
       </section>
 
       <section className="container section how-section">
@@ -169,11 +216,11 @@ export default function HomePage() {
       </section>
 
       <section className="container section faq-section" style={{ margin: '80px auto' }}>
-        <div className="section-heading" style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <div>
+        <div className="section-heading" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '40px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span className="eyebrow">Pertanyaan Umum</span>
             <h2>Punya pertanyaan seputar BaeBack?</h2>
-            <p>Berikut adalah jawaban untuk beberapa pertanyaan yang paling sering diajukan.</p>
+            <p style={{ margin: '10px auto 0' }}>Berikut adalah jawaban untuk beberapa pertanyaan yang paling sering diajukan.</p>
           </div>
         </div>
         <div className="faq-list" style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>

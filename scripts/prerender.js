@@ -28,7 +28,6 @@ const DIST_SSR = path.join(ROOT, 'dist-ssr');
 const PUBLIC_ROUTES = [
   '/',
   '/barang',
-  '/campaign',
   '/need-board',
   '/blog',
   '/login',
@@ -48,7 +47,6 @@ async function prerender() {
   const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
   let fetchedItems = [];
-  let fetchedCampaigns = [];
   let fetchedNeeds = [];
 
   if (supabaseUrl && supabaseKey) {
@@ -58,7 +56,6 @@ async function prerender() {
     try {
       const [
         { data: items },
-        { data: campaigns },
         { data: needs }
       ] = await Promise.all([
         supabase
@@ -67,12 +64,6 @@ async function prerender() {
           .in('status', ['available', 'reserved'])
           .order('created_at', { ascending: false })
           .limit(100),
-        supabase
-          .from('campaigns')
-          .select('*')
-          .eq('status', 'active')
-          .order('created_at', { ascending: false })
-          .limit(50),
         supabase
           .from('need_posts')
           .select('*')
@@ -90,14 +81,7 @@ async function prerender() {
         }
       }
 
-      if (campaigns) {
-        fetchedCampaigns = campaigns;
-        for (const campaign of campaigns) {
-          const route = `/campaign/${campaign.slug}`;
-          routesToRender.push(route);
-          routeData[route] = { campaign };
-        }
-      }
+
 
       if (needs) {
         fetchedNeeds = needs;
@@ -199,7 +183,6 @@ async function prerender() {
     const staticPages = [
       { path: '/', priority: '1.0', changefreq: 'daily' },
       { path: '/barang', priority: '0.9', changefreq: 'daily' },
-      { path: '/campaign', priority: '0.9', changefreq: 'daily' },
       { path: '/need-board', priority: '0.9', changefreq: 'daily' },
       { path: '/blog', priority: '0.8', changefreq: 'daily' },
     ];
@@ -219,16 +202,6 @@ async function prerender() {
       );
     }
 
-    for (const campaign of fetchedCampaigns) {
-      sitemapEntries.push(
-        urlEntry(
-          `${SITE_URL}/campaign/${campaign.slug}`,
-          formatDate(campaign.updated_at || campaign.created_at),
-          'daily',
-          '0.8',
-        )
-      );
-    }
 
     for (const need of fetchedNeeds) {
       sitemapEntries.push(

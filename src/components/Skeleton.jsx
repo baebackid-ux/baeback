@@ -1,4 +1,4 @@
-function SkeletonBlock({ className = '', style, as: Tag = 'span' }) {
+export function SkeletonBlock({ className = '', style, as: Tag = 'span' }) {
   return <Tag className={`skeleton ${className}`.trim()} style={style} aria-hidden="true" />;
 }
 
@@ -35,32 +35,6 @@ export function ItemCardSkeleton({ index = 0, className = '' }) {
   );
 }
 
-export function CampaignCardSkeleton({ index = 0 }) {
-  return (
-    <article className="item-card campaign-card skeleton-card" style={skeletonStyle(index)} aria-hidden="true">
-      <div className="skeleton-image-wrap">
-        <SkeletonBlock className="skeleton-image" as="div" />
-      </div>
-      <div className="item-card-body">
-        <div className="skeleton-row skeleton-row--badges">
-          <SkeletonBlock className="skeleton-pill skeleton-pill--wide" />
-          <SkeletonBlock className="skeleton-pill" />
-        </div>
-        <SkeletonBlock className="skeleton-title" as="div" />
-        <SkeletonBlock className="skeleton-line" as="div" />
-        <SkeletonBlock className="skeleton-line skeleton-line--medium" as="div" />
-        <div className="skeleton-progress">
-          <SkeletonBlock className="skeleton-progress-bar" as="div" />
-          <div className="skeleton-row skeleton-row--progress">
-            <SkeletonBlock className="skeleton-line skeleton-line--tiny" as="div" />
-            <SkeletonBlock className="skeleton-line skeleton-line--tiny" as="div" />
-          </div>
-        </div>
-        <SkeletonBlock className="skeleton-link" as="div" />
-      </div>
-    </article>
-  );
-}
 
 export function NeedCardSkeleton({ index = 0 }) {
   return (
@@ -107,22 +81,8 @@ export function StatCardSkeleton({ index = 0 }) {
   );
 }
 
-export function DonationItemSkeleton({ index = 0 }) {
-  return (
-    <article className="donation-item skeleton-card" style={skeletonStyle(index)} aria-hidden="true">
-      <div className="skeleton-donation-copy">
-        <SkeletonBlock className="skeleton-line skeleton-line--title" as="div" />
-        <SkeletonBlock className="skeleton-line skeleton-line--tiny" as="div" />
-        <SkeletonBlock className="skeleton-line skeleton-line--medium" as="div" />
-      </div>
-      <SkeletonBlock className="skeleton-amount" as="div" />
-    </article>
-  );
-}
 
-export function CardGridSkeleton({ count = 4, variant = 'item', className = '' }) {
-  const SkeletonComponent = variant === 'campaign' ? CampaignCardSkeleton : ItemCardSkeleton;
-
+export function CardGridSkeleton({ count = 4, className = '' }) {
   return (
     <div
       className={`card-grid skeleton-grid ${className}`.trim()}
@@ -130,21 +90,12 @@ export function CardGridSkeleton({ count = 4, variant = 'item', className = '' }
       aria-label="Memuat konten"
     >
       {Array.from({ length: count }, (_, index) => (
-        <SkeletonComponent key={index} index={index} />
+        <ItemCardSkeleton key={index} index={index} />
       ))}
     </div>
   );
 }
 
-export function DonationListSkeleton({ count = 4 }) {
-  return (
-    <div className="donation-list skeleton-grid" aria-busy="true" aria-label="Memuat riwayat donasi">
-      {Array.from({ length: count }, (_, index) => (
-        <DonationItemSkeleton key={index} index={index} />
-      ))}
-    </div>
-  );
-}
 
 export function DashboardSkeleton() {
   return (
@@ -208,5 +159,64 @@ export function SessionSkeleton() {
         </div>
       </div>
     </main>
+  );
+}
+
+export function ItemDetailSkeleton() {
+  return (
+    <div className="container detail-grid skeleton-card" aria-hidden="true" style={{ marginTop: '40px' }}>
+      <div className="detail-media">
+        <SkeletonBlock className="skeleton-image" as="div" style={{ height: '400px', width: '100%' }} />
+      </div>
+      <div className="detail-panel" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="skeleton-row">
+          <SkeletonBlock className="skeleton-pill" />
+          <SkeletonBlock className="skeleton-pill" />
+        </div>
+        <SkeletonBlock className="skeleton-title" as="div" style={{ height: '36px', width: '80%' }} />
+        <SkeletonBlock className="skeleton-line" as="div" style={{ height: '20px', width: '100%' }} />
+        <SkeletonBlock className="skeleton-line" as="div" style={{ height: '20px', width: '100%' }} />
+        <SkeletonBlock className="skeleton-line" as="div" style={{ height: '20px', width: '60%' }} />
+        <div className="detail-facts" style={{ display: 'flex', gap: '16px', marginTop: '20px', flexWrap: 'wrap' }}>
+          <SkeletonBlock className="skeleton-chip" style={{ width: '120px', height: '40px' }} />
+          <SkeletonBlock className="skeleton-chip" style={{ width: '120px', height: '40px' }} />
+          <SkeletonBlock className="skeleton-chip" style={{ width: '120px', height: '40px' }} />
+        </div>
+        <div className="donor-card" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '24px', padding: '16px', border: '1px solid var(--border-color, #eee)', borderRadius: '12px' }}>
+          <SkeletonBlock className="skeleton-avatar" />
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <SkeletonBlock className="skeleton-line" as="div" style={{ width: '30%', height: '12px', marginBottom: 0 }} />
+            <SkeletonBlock className="skeleton-line" as="div" style={{ width: '50%', height: '16px', marginBottom: 0 }} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function NeedDetailSkeleton() {
+  return (
+    <div className="container need-detail-grid skeleton-card" aria-hidden="true" style={{ marginTop: '40px' }}>
+      <div className="need-detail-story" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="skeleton-row">
+          <SkeletonBlock className="skeleton-pill" />
+          <SkeletonBlock className="skeleton-pill" />
+        </div>
+        <SkeletonBlock className="skeleton-title" as="div" style={{ height: '36px', width: '80%' }} />
+        <SkeletonBlock className="skeleton-line" as="div" style={{ width: '30%', height: '14px' }} />
+        <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <SkeletonBlock className="skeleton-line" as="div" style={{ height: '14px' }} />
+          <SkeletonBlock className="skeleton-line" as="div" style={{ height: '14px' }} />
+          <SkeletonBlock className="skeleton-line" as="div" style={{ height: '14px', width: '60%' }} />
+        </div>
+      </div>
+      <div className="offer-panel" style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px', border: '1px solid var(--border-color, #eee)', borderRadius: '16px' }}>
+        <SkeletonBlock className="skeleton-icon" as="div" style={{ width: '48px', height: '48px' }} />
+        <SkeletonBlock className="skeleton-title" as="div" style={{ width: '70%', height: '24px', margin: 0 }} />
+        <SkeletonBlock className="skeleton-line" as="div" style={{ width: '90%', height: '14px', margin: 0 }} />
+        <div style={{ height: '120px', background: 'var(--skeleton-base, #e6ebe7)', borderRadius: '8px', margin: '12px 0' }} className="skeleton" />
+        <SkeletonBlock className="skeleton-pill" style={{ width: '100%', height: '44px' }} />
+      </div>
+    </div>
   );
 }

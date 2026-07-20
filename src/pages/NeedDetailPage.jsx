@@ -4,7 +4,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import Badge from '../components/Badge';
 import SEO from '../components/SEO';
 import StatusPill from '../components/StatusPill';
+import { NeedDetailSkeleton } from '../components/Skeleton';
 import { useAuth } from '../contexts/AuthContext';
+import { useDelayedLoading } from '../lib/useDelayedLoading';
 import { fallbackNeeds } from '../data/mockData';
 import { getNeedStatusLabel, summarizeText } from '../lib/formatters';
 import { buildNeedJsonLd } from '../lib/seo';
@@ -18,16 +20,57 @@ export default function NeedDetailPage() {
   const [need, setNeed] = useState(() => {
     const initial = typeof window === 'undefined' ? globalThis.__INITIAL_DATA__?.need : window.__INITIAL_DATA__?.need;
     if (initial && String(initial.id) === String(id)) return initial;
-    return fallbackNeeds.find((entry) => entry.id === id) || fallbackNeeds[0];
+    return isSupabaseConfigured ? null : (fallbackNeeds.find((entry) => entry.id === id) || fallbackNeeds[0]);
   });
   const [message, setMessage] = useState('');
   const [notice, setNotice] = useState('');
+  const [loading, setLoading] = useState(!need && isSupabaseConfigured);
+  const showSkeleton = useDelayedLoading(loading, 200);
 
   useEffect(() => {
-    if (!isSupabaseConfigured) return;
-    async function loadNeed() { const { data } = await supabase.from('need_posts').select('*').eq('id', id).single(); if (data) setNeed(data); }
+    if (!isSupabaseConfigured) {
+      setLoading(false);
+      return;
+    }
+    async function loadNeed() {
+      setLoading(true);
+      try {
+        const { data } = await supabase.from('need_posts').select('*').eq('id', id).single();
+        if (data) setNeed(data);
+      } catch (err) {
+        console.error('Error loading need:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
     loadNeed();
   }, [id]);
+
+  if (loading) {
+    return (
+      <main className="need-detail-page">
+        <SEO title="Memuat kebutuhan..." noindex />
+        <div className="container detail-breadcrumb">
+          <Link to="/need-board"><ArrowLeft size={16} /> Kembali ke Need Board</Link>
+        </div>
+        {showSkeleton && <NeedDetailSkeleton />}
+      </main>
+    );
+  }
+
+  if (!need) {
+    return (
+      <main className="need-detail-page">
+        <div className="container" style={{ padding: '80px 0', textAlign: 'center' }}>
+          <h2>Kebutuhan tidak ditemukan</h2>
+          <p>Kebutuhan mungkin sudah dipenuhi atau telah dihapus.</p>
+          <Link to="/need-board" className="btn btn-primary" style={{ marginTop: '20px', display: 'inline-block' }}>
+            Kembali ke Need Board
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   function requireLogin() {
     if (user) return true;
@@ -53,8 +96,8 @@ export default function NeedDetailPage() {
   return (
     <main className="need-detail-page">
       <SEO
-        title={need.title}
-        description={summarizeText(need.description, 155) || `${need.title} — kebutuhan komunitas di ${need.location}.`}
+        title={`Butuh: ${need.title} — Info Donasi ${need.location || 'Semarang'}`}
+        description={`Membantu mencarikan donasi untuk: ${need.title} di daerah ${need.location || 'Semarang'}. Apakah kamu punya barang bekas layak pakai ini? Salurkan gratis di BaeBack.`}
         path={`/need-board/${need.id}`}
         jsonLd={buildNeedJsonLd(need)}
       />

@@ -45,8 +45,51 @@ export function LenisProvider({ children }) {
     };
   }, []);
 
+  const prevPathnameRef = useRef(pathname);
+
+  // Store scroll positions locally in sessionStorage on user scroll
   useEffect(() => {
+    if (!lenis) return;
+
+    const handleScroll = () => {
+      if (typeof window !== 'undefined' && window.sessionStorage) {
+        sessionStorage.setItem(`scroll-pos-${pathname}`, lenis.scroll.toString());
+      }
+    };
+
+    lenis.on('scroll', handleScroll);
+    return () => {
+      lenis.off('scroll', handleScroll);
+    };
+  }, [lenis, pathname]);
+
+  useEffect(() => {
+    const pathnameChanged = prevPathnameRef.current !== pathname;
+    prevPathnameRef.current = pathname;
+
     const scrollTarget = hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
+
+    if (pathnameChanged) {
+      const savedPos = typeof window !== 'undefined' && window.sessionStorage
+        ? sessionStorage.getItem(`scroll-pos-${pathname}`)
+        : null;
+      const targetScroll = savedPos ? parseInt(savedPos, 10) : 0;
+
+      if (lenisRef.current) {
+        lenisRef.current.scrollTo(targetScroll, { immediate: true });
+      } else {
+        window.scrollTo(0, targetScroll);
+      }
+
+      if (scrollTarget) {
+        if (lenisRef.current) {
+          lenisRef.current.scrollTo(scrollTarget, { offset: -88, immediate: true });
+        } else {
+          scrollTarget.scrollIntoView({ behavior: 'auto', block: 'start' });
+        }
+      }
+      return;
+    }
 
     if (scrollTarget && lenisRef.current) {
       lenisRef.current.scrollTo(scrollTarget, { offset: -88 });

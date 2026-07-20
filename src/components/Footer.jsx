@@ -20,7 +20,6 @@ export default function Footer() {
           <h4>Jelajahi</h4>
           <Link to="/barang">Cari Barang</Link>
           <Link to="/need-board">Need Board</Link>
-          <Link to="/campaign">Campaign</Link>
           <Link to="/blog">Blog & Inspirasi</Link>
           <Link to="/donasikan">Bagikan Barang</Link>
         </div>

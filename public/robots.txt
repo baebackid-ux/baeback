@@ -1,7 +1,6 @@
 User-agent: *
 Allow: /
 Allow: /barang
-Allow: /campaign
 Allow: /need-board
 Allow: /blog
 Disallow: /dashboard
@@ -9,7 +8,6 @@ Disallow: /profil
 Disallow: /admin
 Disallow: /pengajuan
 Disallow: /daftar-minat
-Disallow: /donasi-saya
 Disallow: /donasikan
 Disallow: /login
 Disallow: /register

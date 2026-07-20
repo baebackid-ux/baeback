@@ -1,4 +1,4 @@
-import { ChevronDown, HeartHandshake, LogOut, Menu, UserRound, X } from 'lucide-react';
+import { ChevronDown, HeartHandshake, LogOut, Menu, ShieldCheck, UserRound, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -7,7 +7,6 @@ import { useLenis } from '../contexts/LenisContext';
 const navItems = [
   { to: '/', label: 'Beranda' },
   { to: '/barang', label: 'Jelajahi Barang' },
-  { to: '/campaign', label: 'Campaign' },
   { to: '/need-board', label: 'Need Board' },
   { to: '/blog', label: 'Blog' },
 ];
@@ -77,8 +76,12 @@ export default function Navbar() {
                 <ChevronDown size={15} />
               </Link>
               <div className="account-popover">
+                {profile?.role === 'admin' && (
+                  <Link to="/admin" onClick={() => setOpen(false)}>
+                    <ShieldCheck size={16} /> Panel Admin
+                  </Link>
+                )}
                 <Link to="/dashboard" onClick={() => setOpen(false)}><UserRound size={16} /> Dashboard</Link>
-                <Link to="/donasi-saya" onClick={() => setOpen(false)}>Donasi saya</Link>
                 <Link to="/profil" onClick={() => setOpen(false)}>Profil kontribusi</Link>
                 <Link to="/daftar-minat" onClick={() => setOpen(false)}>Daftar minat</Link>
                 <button onClick={signOut}><LogOut size={16} /> Keluar</button>

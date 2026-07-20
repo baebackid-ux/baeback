@@ -25,14 +25,14 @@ describe('Auth middleware', () => {
     verifyUserToken.mockResolvedValue(null);
 
     const res = await request(app)
-      .get('/api/v1/donations/me')
+      .get('/api/v1/test-auth')
       .set('Authorization', 'Bearer invalid');
 
     expect(res.status).toBe(401);
   });
 
   it('rejects missing authorization header', async () => {
-    const res = await request(app).get('/api/v1/donations/me');
+    const res = await request(app).get('/api/v1/test-auth');
     expect(res.status).toBe(401);
   });
 });

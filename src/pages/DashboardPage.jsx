@@ -8,6 +8,7 @@ import SEO from '../components/SEO';
 import StatusPill from '../components/StatusPill';
 import { DashboardSkeleton } from '../components/Skeleton';
 import { useAuth } from '../contexts/AuthContext';
+import { useDelayedLoading } from '../lib/useDelayedLoading';
 import { fallbackItems, fallbackNeeds, fallbackRequests } from '../data/mockData';
 import { badgeLabels } from '../lib/constants';
 import { getRequestStatusLabel } from '../lib/formatters';
@@ -23,6 +24,7 @@ export default function DashboardPage() {
     needs: isSupabaseConfigured ? [] : fallbackNeeds.slice(0, 2),
     loading: isSupabaseConfigured,
   });
+  const showSkeleton = useDelayedLoading(dashboardData.loading, 200);
 
   useEffect(() => {
     if (!isSupabaseConfigured || !user) return undefined;
@@ -258,8 +260,10 @@ export default function DashboardPage() {
         </aside>
 
         <div className="dashboard-main">
-          {dashboardData.loading && isSupabaseConfigured ? (
+          {showSkeleton ? (
             <DashboardSkeleton />
+          ) : dashboardData.loading ? (
+            null
           ) : (
             <div className="content-reveal">{renderTabContent()}</div>
           )}

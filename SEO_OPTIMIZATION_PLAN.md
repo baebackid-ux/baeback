@@ -7,7 +7,7 @@ Dokumen ini berisi panduan dan rencana aksi untuk memaksimalkan performa SEO pro
 ## 1. Integrasi Google Search Console & Bing Webmaster
 Untuk memastikan mesin pencari mengetahui keberadaan website dan mengindeks seluruh halamannya secara cepat.
 *   **Pendaftaran Domain**: Daftarkan domain utama (misal: `https://baeback.pages.dev`) di [Google Search Console](https://search.google.com/search-console) dan [Bing Webmaster Tools](https://www.bing.com/webmasters).
-*   **Kirimkan Sitemap**: Masukkan URL sitemap dinamis proyek (`https://baeback.pages.dev/sitemap.xml`) di menu *Sitemaps*. Ini membantu crawler menemukan postingan barang dan campaign baru secara otomatis.
+*   **Kirimkan Sitemap**: Masukkan URL sitemap dinamis proyek (`https://baeback.pages.dev/sitemap.xml`) di menu *Sitemaps*. Ini membantu crawler menemukan postingan barang baru secara otomatis.
 *   **Pemantauan *Index Coverage***: Cek secara berkala apakah ada halaman yang gagal diindeks karena kesalahan redirect, 404, atau masalah perayapan seluler (*mobile-friendliness*).
 
 ---

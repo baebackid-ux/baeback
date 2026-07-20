@@ -8,6 +8,7 @@ import SEO from '../components/SEO';
 import { CardGridSkeleton, ItemCardSkeleton } from '../components/Skeleton';
 import { fallbackItems } from '../data/mockData';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { useDelayedLoading } from '../lib/useDelayedLoading';
 
 export default function ItemsPage() {
   const [searchParams] = useSearchParams();
@@ -23,6 +24,7 @@ export default function ItemsPage() {
   const itemsPerPage = 12;
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isSupabaseConfigured);
+  const showSkeleton = useDelayedLoading(initialLoading, 200);
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef(null);
 
@@ -138,8 +140,10 @@ export default function ItemsPage() {
       <div className="container">
       <SearchFilters filters={filters} onChange={setFilters} />
       <div className="catalog-toolbar"><p><strong>{initialLoading ? '—' : filteredItems.length}</strong> barang ditemukan</p><span><SlidersHorizontal size={15} /> Terbaru lebih dulu</span></div>
-      {initialLoading ? (
+      {showSkeleton ? (
         <CardGridSkeleton count={8} />
+      ) : initialLoading ? (
+        null
       ) : filteredItems.length ? (
         <>
         <div className="card-grid content-reveal">

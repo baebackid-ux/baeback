@@ -4,13 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import NeedCard from '../components/NeedCard';
 import SEO from '../components/SEO';
+import { NeedCardSkeleton } from '../components/Skeleton';
 import { useAuth } from '../contexts/AuthContext';
+import { useDelayedLoading } from '../lib/useDelayedLoading';
 import { fallbackNeeds } from '../data/mockData';
 import { socialCategories } from '../lib/constants';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export default function NeedBoardPage() {
-  const [needs, setNeeds] = useState(fallbackNeeds);
+  const [needs, setNeeds] = useState(isSupabaseConfigured ? [] : fallbackNeeds);
+  const [loading, setLoading] = useState(isSupabaseConfigured);
+  const showSkeleton = useDelayedLoading(loading, 200);
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('');
   const [formOpen, setFormOpen] = useState(false);
@@ -22,8 +26,15 @@ export default function NeedBoardPage() {
   useEffect(() => {
     if (!isSupabaseConfigured) return;
     async function loadNeeds() {
-      const { data } = await supabase.from('need_posts').select('*').order('created_at', { ascending: false });
-      if (data) setNeeds(data);
+      setLoading(true);
+      try {
+        const { data } = await supabase.from('need_posts').select('*').order('created_at', { ascending: false });
+        if (data) setNeeds(data);
+      } catch (err) {
+        console.error('Failed to load needs:', err);
+      } finally {
+        setLoading(false);
+      }
     }
     loadNeeds();
   }, []);
@@ -70,7 +81,27 @@ export default function NeedBoardPage() {
 
       <section className="container need-board-layout">
         <aside className="need-categories"><span>Filter berdasarkan</span><button className={!category ? 'active' : ''} onClick={() => setCategory('')}>Semua kebutuhan <small>{needs.length}</small></button>{socialCategories.map((entry) => <button className={category === entry ? 'active' : ''} key={entry} onClick={() => setCategory(entry)}>{entry}<ArrowRight size={14} /></button>)}</aside>
-        <div className="need-results"><div className="results-heading"><div><span className="eyebrow">Permintaan terbuka</span><h2>{category || 'Semua kebutuhan'}</h2></div><p>{filteredNeeds.length} kebutuhan ditemukan</p></div>{filteredNeeds.length ? <div className="need-card-grid">{filteredNeeds.map((need) => <NeedCard key={need.id} need={need} />)}</div> : <EmptyState title="Belum ada kebutuhan di pilihan ini" description="Coba kategori lain atau tulis kebutuhan baru dengan informasi yang jelas." />}</div>
+        <div className="need-results">
+          <div className="results-heading">
+            <div><span className="eyebrow">Permintaan terbuka</span><h2>{category || 'Semua kebutuhan'}</h2></div>
+            <p>{loading ? '—' : filteredNeeds.length} kebutuhan ditemukan</p>
+          </div>
+          {showSkeleton ? (
+            <div className="need-card-grid">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <NeedCardSkeleton key={index} index={index} />
+              ))}
+            </div>
+          ) : loading ? (
+            null
+          ) : filteredNeeds.length ? (
+            <div className="need-card-grid">
+              {filteredNeeds.map((need) => <NeedCard key={need.id} need={need} />)}
+            </div>
+          ) : (
+            <EmptyState title="Belum ada kebutuhan di pilihan ini" description="Coba kategori lain atau tulis kebutuhan baru dengan informasi yang jelas." />
+          )}
+        </div>
       </section>
 
       {formOpen && <div className="modal-backdrop" role="presentation"><div className="modal need-form-modal" role="dialog" aria-modal="true" aria-labelledby="need-form-title"><button className="icon-button modal-close" onClick={() => setFormOpen(false)} aria-label="Tutup"><X size={20} /></button><span className="eyebrow">Need Board</span><h2 id="need-form-title">Ceritakan apa yang kamu butuhkan</h2><p>Berikan informasi secukupnya agar calon pemberi dapat memahami dan menawarkan barang yang tepat.</p><form className="form-stack" onSubmit={handleSubmit}><label><span>Judul kebutuhan</span><input required value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} placeholder="Contoh: Butuh meja belajar untuk anak" /></label><div className="two-column"><label><span>Kategori</span><select value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })}>{socialCategories.map((entry) => <option key={entry}>{entry}</option>)}</select></label><label><span>Lokasi umum</span><input required value={form.location} onChange={(event) => setForm({ ...form, location: event.target.value })} placeholder="Kota atau area" /></label></div><label><span>Deskripsi kebutuhan</span><textarea required value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} placeholder="Jelaskan jenis, ukuran, atau kondisi yang masih cocok..." /></label><button className="btn btn-primary" type="submit"><HandHeart size={18} /> Publikasikan kebutuhan</button></form></div></div>}

@@ -1,7 +1,7 @@
 export const SITE_NAME = 'BaeBack';
 export const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://baeback.pages.dev';
 export const DEFAULT_DESCRIPTION =
-  'BaeBack adalah marketplace charity untuk berbagi barang layak pakai secara gratis, mengajukan kebutuhan, dan mendukung campaign kebaikan.';
+  'BaeBack adalah charity marketplace untuk berbagi baju bekas dan barang layak pakai secara gratis (Rp 0) di area Semarang, Jawa Tengah dan sekitarnya.';
 export const DEFAULT_OG_IMAGE = '/og-default.svg';
 
 export function buildOrganizationJsonLd() {
@@ -13,6 +13,22 @@ export function buildOrganizationJsonLd() {
     logo: `${SITE_URL}/favicon.svg`,
     description: DEFAULT_DESCRIPTION,
     email: 'halo@baeback.id',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Semarang',
+      addressRegion: 'Jawa Tengah',
+      addressCountry: 'ID'
+    },
+    areaServed: [
+      {
+        '@type': 'AdministrativeArea',
+        name: 'Semarang'
+      },
+      {
+        '@type': 'AdministrativeArea',
+        name: 'Jawa Tengah'
+      }
+    ]
   };
 }
 
@@ -24,6 +40,10 @@ export function buildWebSiteJsonLd() {
     url: SITE_URL,
     description: DEFAULT_DESCRIPTION,
     inLanguage: 'id-ID',
+    contentLocation: {
+      '@type': 'Place',
+      name: 'Semarang, Jawa Tengah, Indonesia'
+    },
     potentialAction: {
       '@type': 'SearchAction',
       target: {
@@ -51,21 +71,6 @@ export function buildProductJsonLd(item) {
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
       url: `${SITE_URL}/barang/${item.id}`,
-    },
-  };
-}
-
-export function buildCampaignJsonLd(campaign) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'DonateAction',
-    name: campaign.title,
-    description: campaign.description,
-    image: campaign.image_url,
-    url: `${SITE_URL}/campaign/${campaign.slug}`,
-    recipient: {
-      '@type': 'Organization',
-      name: SITE_NAME,
     },
   };
 }

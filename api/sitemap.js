@@ -32,7 +32,6 @@ export default async function handler(_req, res) {
   const staticPages = [
     { path: '/', priority: '1.0', changefreq: 'daily' },
     { path: '/barang', priority: '0.9', changefreq: 'daily' },
-    { path: '/campaign', priority: '0.9', changefreq: 'daily' },
     { path: '/need-board', priority: '0.9', changefreq: 'daily' },
   ];
 
@@ -44,19 +43,13 @@ export default async function handler(_req, res) {
     try {
       const supabase = createClient(supabaseUrl, supabaseKey);
 
-      const [{ data: items }, { data: campaigns }, { data: needs }] = await Promise.all([
+       const [{ data: items }, { data: needs }] = await Promise.all([
         supabase
           .from('items')
           .select('id, updated_at, created_at')
           .in('status', ['available', 'reserved'])
           .order('created_at', { ascending: false })
           .limit(500),
-        supabase
-          .from('campaigns')
-          .select('slug, updated_at, created_at')
-          .eq('status', 'active')
-          .order('created_at', { ascending: false })
-          .limit(100),
         supabase
           .from('need_posts')
           .select('id, updated_at, created_at')
@@ -76,16 +69,6 @@ export default async function handler(_req, res) {
         );
       }
 
-      for (const campaign of campaigns || []) {
-        entries.push(
-          urlEntry(
-            `${SITE_URL}/campaign/${campaign.slug}`,
-            formatDate(campaign.updated_at || campaign.created_at),
-            'daily',
-            '0.8',
-          ),
-        );
-      }
 
       for (const need of needs || []) {
         entries.push(

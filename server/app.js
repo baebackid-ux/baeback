@@ -6,14 +6,12 @@ import { isUsingRedis } from './lib/cache/index.js';
 import { checkSupabaseHealth } from './lib/supabase.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/requestLogger.js';
-import createCampaignRoutes from './routes/campaigns.js';
-import createDonationRoutes from './routes/donations.js';
-import createAdminCampaignRoutes from './routes/admin/campaigns.js';
 import { ssrBotMiddleware } from './middleware/ssrBot.js';
+import { requireAuth } from './middleware/auth.js';
 
 const startTime = Date.now();
 
-function mountApiRoutes(app, config, prefix, donationLimiter) {
+function mountApiRoutes(app, config, prefix) {
   app.get(`${prefix}/health`, async (_req, res) => {
     const supabaseOk = await checkSupabaseHealth(config);
     const redisStatus = config.redisUrl ? (isUsingRedis() ? 'ok' : 'fail') : 'skip';
@@ -24,10 +22,6 @@ function mountApiRoutes(app, config, prefix, donationLimiter) {
       environment: config.nodeEnv,
     });
   });
-
-  app.use(`${prefix}/campaigns`, createCampaignRoutes(config));
-  app.use(`${prefix}/donations`, donationLimiter, createDonationRoutes(config));
-  app.use(`${prefix}/admin/campaigns`, createAdminCampaignRoutes(config));
 }
 
 export function createApp(config) {
@@ -48,17 +42,15 @@ export function createApp(config) {
     message: { error: 'Terlalu banyak permintaan. Coba lagi nanti.' },
   });
 
-  const donationLimiter = rateLimit({
-    windowMs: 60 * 1000,
-    max: 10,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: { error: 'Terlalu banyak permintaan donasi. Coba lagi nanti.' },
-  });
-
   app.use('/api', generalLimiter);
-  mountApiRoutes(app, config, '/api/v1', donationLimiter);
-  mountApiRoutes(app, config, '/api', donationLimiter);
+  mountApiRoutes(app, config, '/api/v1');
+  mountApiRoutes(app, config, '/api');
+
+  if (config.nodeEnv === 'test') {
+    app.get('/api/v1/test-auth', requireAuth(config), (_req, res) => {
+      res.json({ ok: true });
+    });
+  }
 
   app.use((_req, res) => {
     res.status(404).json({ error: 'Endpoint tidak ditemukan.' });

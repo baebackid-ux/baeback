@@ -5,20 +5,34 @@ import EmptyState from '../components/EmptyState';
 import AccountNav from '../components/AccountNav';
 import ItemCard from '../components/ItemCard';
 import SEO from '../components/SEO';
+import { CardGridSkeleton } from '../components/Skeleton';
 import { useAuth } from '../contexts/AuthContext';
+import { useDelayedLoading } from '../lib/useDelayedLoading';
 import { fallbackItems } from '../data/mockData';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export default function FavoritesPage() {
   const [savedItems, setSavedItems] = useState(isSupabaseConfigured ? [] : fallbackItems.slice(0, 2));
+  const [loading, setLoading] = useState(isSupabaseConfigured);
+  const showSkeleton = useDelayedLoading(loading, 200);
   const { user } = useAuth();
 
   useEffect(() => {
-    if (!isSupabaseConfigured || !user) return;
+    if (!isSupabaseConfigured || !user) {
+      setLoading(false);
+      return;
+    }
 
     async function loadFavorites() {
-      const { data } = await supabase.from('favorites').select('item:items(*)').eq('user_id', user.id);
-      if (data) setSavedItems(data.map((entry) => entry.item).filter(Boolean));
+      setLoading(true);
+      try {
+        const { data } = await supabase.from('favorites').select('item:items(*)').eq('user_id', user.id);
+        if (data) setSavedItems(data.map((entry) => entry.item).filter(Boolean));
+      } catch (err) {
+        console.error('Failed to load favorites:', err);
+      } finally {
+        setLoading(false);
+      }
     }
 
     loadFavorites();
@@ -41,7 +55,11 @@ export default function FavoritesPage() {
         <p>Kumpulan barang yang menarik perhatianmu sebelum kamu benar-benar mengajukan.</p>
       </div>
       <div className="container">
-      {savedItems.length ? (
+      {showSkeleton ? (
+        <CardGridSkeleton count={4} />
+      ) : loading ? (
+        null
+      ) : savedItems.length ? (
         <div className="card-grid">
           {savedItems.map((item) => (
             <div className="favorite-wrap" key={item.id}>

@@ -6,7 +6,9 @@ import ItemCard from '../components/ItemCard';
 import RequestModal from '../components/RequestModal';
 import SEO from '../components/SEO';
 import StatusPill from '../components/StatusPill';
+import { ItemDetailSkeleton } from '../components/Skeleton';
 import { useAuth } from '../contexts/AuthContext';
+import { useDelayedLoading } from '../lib/useDelayedLoading';
 import { fallbackItems } from '../data/mockData';
 import { getItemStatusLabel, getPostTypeLabel, getOptimizedImageUrl, summarizeText } from '../lib/formatters';
 import { buildProductJsonLd, SITE_URL } from '../lib/seo';
@@ -24,6 +26,7 @@ export default function ItemDetailPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [loading, setLoading] = useState(!item);
+  const showSkeleton = useDelayedLoading(loading, 200);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -45,11 +48,13 @@ export default function ItemDetailPage() {
 
   if (loading) {
     return (
-      <div className="page-shell" aria-busy="true">
-        <div className="container" style={{ padding: '80px 0', textAlign: 'center' }}>
-          Memuat detail barang...
+      <main className="detail-page">
+        <SEO title="Memuat detail barang..." noindex />
+        <div className="container detail-breadcrumb">
+          <Link to="/barang"><ArrowLeft size={16} /> Kembali ke katalog</Link>
         </div>
-      </div>
+        {showSkeleton && <ItemDetailSkeleton />}
+      </main>
     );
   }
 
@@ -120,8 +125,8 @@ export default function ItemDetailPage() {
   return (
     <main className="detail-page">
       <SEO
-        title={`${item.title} — Gratis`}
-        description={summarizeText(item.description, 155) || `${item.title} — barang gratis di BaeBack, ${item.location}.`}
+        title={`${item.title} (Gratis/Rp 0) — Donasi Barang Bekas ${item.location || 'Semarang'}`}
+        description={`Cari barang murah atau gratis? Dapatkan ${item.title} dengan harga Rp 0 di ${item.location || 'Semarang'}. ${summarizeText(item.description, 90)}`}
         path={`/barang/${item.id}`}
         image={item.image_url}
         type="product"
